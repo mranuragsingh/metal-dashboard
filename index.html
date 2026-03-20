@@ -7,23 +7,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:       #060D1F;
-  --bg2:      #0A1628;
-  --bg3:      #0F2040;
-  --bg4:      #162B52;
-  --border:   #1E3460;
-  --gold:     #C8A45A;
-  --gold2:    #E5C97A;
-  --silver:   #B8C4D4;
-  --dim:      #4A5A7A;
-  --white:    #F0F4FF;
+  --bg:       #111827;
+  --bg2:      #1A2234;
+  --bg3:      #232D3F;
+  --bg4:      #374151;
+  --border:   #374151;
+  --gold:     #A78BFA;
+  --gold2:    #C4B5FD;
+  --silver:   #D1D5DB;
+  --dim:      #6B7280;
+  --white:    #EDE9FE;
   --up:       #00D4A0;
   --down:     #FF4D6A;
-  --flat:     #F0A045;
-  --fer:      #4E9FFF;
-  --nfe:      #00C896;
-  --pre:      #FFB830;
-  --ene:      #FF6B35;
+  --flat:     #A78BFA;
+  --fer:      #A78BFA;
+  --nfe:      #818CF8;
+  --pre:      #C4B5FD;
+  --ene:      #7C3AED;
   --font-display: 'Barlow Condensed', sans-serif;
   --font-body:    'Barlow', sans-serif;
   --font-mono:    'JetBrains Mono', monospace;
@@ -71,7 +71,7 @@ body {
   display:flex; align-items:center; justify-content:center;
   font-family: var(--font-display);
   font-weight:800; font-size:16px; color: var(--bg);
-  clip-path: polygon(0 0, 85% 0, 100% 15%, 100% 100%, 15% 100%, 0 85%);
+  clip-path: polygon(0 0, 85% 0, 100% 15%, 100% 100%, 15% 100%, 0 85%); border: 1px solid #818CF8;
 }
 .brand-text { line-height:1.1; }
 .brand-text .t1 { font-family:var(--font-display); font-size:13px; font-weight:700; color:var(--white); letter-spacing:1px; }
@@ -267,7 +267,7 @@ body {
 }
 .up   { color:var(--up);   background:rgba(0,212,160,.1); }
 .down { color:var(--down); background:rgba(255,77,106,.1); }
-.flat { color:var(--flat); background:rgba(240,160,69,.1); }
+.flat { color:var(--flat); background:rgba(129,140,248,.1); }
 .kpi-sparkline { margin-top:12px; height:36px; }
 
 /* ── METAL ROW ───────────────────────────────── */
@@ -313,11 +313,11 @@ body {
   letter-spacing:1.5px; text-transform:uppercase;
   padding:2px 8px; border-radius:3px; margin-bottom:6px;
 }
-.tag-fer   { background:rgba(78,159,255,.15); color:var(--fer); }
-.tag-nfe   { background:rgba(0,200,150,.15);  color:var(--nfe); }
-.tag-pre   { background:rgba(255,184,48,.15); color:var(--pre); }
-.tag-ene   { background:rgba(255,107,53,.15); color:var(--ene); }
-.tag-global{ background:rgba(200,164,90,.15); color:var(--gold); }
+.tag-fer   { background:rgba(167,139,250,.12); color:var(--fer); }
+.tag-nfe   { background:rgba(129,140,248,.12);  color:var(--nfe); }
+.tag-pre   { background:rgba(232,196,160,.15); color:var(--pre); }
+.tag-ene   { background:rgba(192,82,42,.15); color:var(--ene); }
+.tag-global{ background:rgba(129,140,248,.15); color:var(--gold); }
 .news-title { font-size:13px; font-weight:600; line-height:1.4; margin-bottom:4px; transition:color .15s; }
 .news-meta  { font-size:11px; color:var(--dim); }
 
@@ -339,7 +339,7 @@ body {
   padding:2px 7px; border-radius:3px;
 }
 .sev-high   { background:rgba(255,77,106,.15); color:var(--down); }
-.sev-medium { background:rgba(240,160,69,.15);  color:var(--flat); }
+.sev-medium { background:rgba(129,140,248,.12);  color:var(--flat); }
 .sev-low    { background:rgba(0,212,160,.15);  color:var(--up); }
 .dis-meta { font-size:11px; color:var(--dim); }
 
@@ -376,7 +376,7 @@ body {
   border-radius:4px;
 }
 .status-triggered { background:rgba(255,77,106,.1); color:var(--down); }
-.status-watching  { background:rgba(240,160,69,.1);  color:var(--flat); }
+.status-watching  { background:rgba(129,140,248,.1);  color:var(--flat); }
 
 /* ── STAT BOXES ──────────────────────────────── */
 .stat-box {
@@ -478,7 +478,7 @@ body {
   position:absolute; top:calc(var(--header-h) + 4px); right:160px;
   width:340px; background:var(--bg2); border:1px solid var(--border);
   border-radius:10px; z-index:200; display:none; overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  box-shadow:0 20px 60px rgba(5,8,18,0.7);
 }
 .notify-dropdown.open { display:block; }
 .notify-header-row {
@@ -665,7 +665,7 @@ body {
       <span class="nav-icon">🔔</span> Alerts Manager
     </a>
     <a class="nav-item" onclick="showPage('askpr')">
-      <span class="nav-icon">✦</span> Ask PR  <span style="font-size:9px;padding:1px 5px;background:rgba(200,164,90,.15);color:var(--gold);border-radius:3px;margin-left:2px">AI</span>
+      <span class="nav-icon">✦</span> Ask PR  <span style="font-size:9px;padding:1px 5px;background:rgba(129,140,248,.15);color:var(--gold);border-radius:3px;margin-left:2px">AI</span>
     </a>
   </div>
 
@@ -715,7 +715,7 @@ body {
         <span class="kpi-change up">▲ +2.3% MoM</span>
         <div class="kpi-sparkline">
           <svg class="mini-chart" viewBox="0 0 160 40" preserveAspectRatio="none">
-            <polyline points="0,32 13,30 26,26 39,28 52,24 65,26 78,22 91,24 104,20 117,18 130,16 143,14 156,10" fill="none" stroke="var(--fer)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,32 13,30 26,26 39,28 52,24 65,26 78,22 91,24 104,20 117,18 130,16 143,14 156,10" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <polyline points="0,32 13,30 26,26 39,28 52,24 65,26 78,22 91,24 104,20 117,18 130,16 143,14 156,10 156,40 0,40" fill="url(#ferGrad)" opacity=".15"/>
             <defs><linearGradient id="ferGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--fer)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
           </svg>
@@ -729,7 +729,7 @@ body {
         <span class="kpi-change up">▲ +1.1% MoM</span>
         <div class="kpi-sparkline">
           <svg class="mini-chart" viewBox="0 0 160 40" preserveAspectRatio="none">
-            <polyline points="0,28 13,26 26,24 39,26 52,22 65,24 78,22 91,24 104,20 117,22 130,18 143,20 156,16" fill="none" stroke="var(--nfe)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,28 13,26 26,24 39,26 52,22 65,24 78,22 91,24 104,20 117,22 130,18 143,20 156,16" fill="none" stroke="#818CF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <polyline points="0,28 13,26 26,24 39,26 52,22 65,24 78,22 91,24 104,20 117,22 130,18 143,20 156,16 156,40 0,40" fill="url(#nfeGrad)" opacity=".15"/>
             <defs><linearGradient id="nfeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--nfe)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
           </svg>
@@ -743,7 +743,7 @@ body {
         <span class="kpi-change up">▲ +3.8% MoM</span>
         <div class="kpi-sparkline">
           <svg class="mini-chart" viewBox="0 0 160 40" preserveAspectRatio="none">
-            <polyline points="0,34 13,30 26,28 39,24 52,22 65,20 78,18 91,16 104,14 117,16 130,12 143,10 156,8" fill="none" stroke="var(--pre)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,34 13,30 26,28 39,24 52,22 65,20 78,18 91,16 104,14 117,16 130,12 143,10 156,8" fill="none" stroke="#C4B5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <polyline points="0,34 13,30 26,28 39,24 52,22 65,20 78,18 91,16 104,14 117,16 130,12 143,10 156,8 156,40 0,40" fill="url(#preGrad)" opacity=".15"/>
             <defs><linearGradient id="preGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--pre)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
           </svg>
@@ -757,7 +757,7 @@ body {
         <span class="kpi-change down">▼ −0.4% MoM</span>
         <div class="kpi-sparkline">
           <svg class="mini-chart" viewBox="0 0 160 40" preserveAspectRatio="none">
-            <polyline points="0,18 13,20 26,16 39,20 52,24 65,26 78,24 91,26 104,28 117,30 130,28 143,30 156,30" fill="none" stroke="var(--ene)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,18 13,20 26,16 39,20 52,24 65,26 78,24 91,26 104,28 117,30 130,28 143,30 156,30" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <polyline points="0,18 13,20 26,16 39,20 52,24 65,26 78,24 91,26 104,28 117,30 130,28 143,30 156,30 156,40 0,40" fill="url(#eneGrad)" opacity=".15"/>
             <defs><linearGradient id="eneGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--ene)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
           </svg>
@@ -1044,19 +1044,19 @@ body {
       <div class="card-body">
         <svg width="100%" height="200" viewBox="0 0 800 200" preserveAspectRatio="none">
           <defs>
-            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E9FFF" stop-opacity=".3"/><stop offset="100%" stop-color="#4E9FFF" stop-opacity="0"/></linearGradient>
-            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00C896" stop-opacity=".3"/><stop offset="100%" stop-color="#00C896" stop-opacity="0"/></linearGradient>
+            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A78BFA" stop-opacity=".3"/><stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/></linearGradient>
+            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#818CF8" stop-opacity=".3"/><stop offset="100%" stop-color="#818CF8" stop-opacity="0"/></linearGradient>
           </defs>
           <!-- Grid lines -->
-          <line x1="0" y1="40" x2="800" y2="40" stroke="#1E3460" stroke-width="1"/>
-          <line x1="0" y1="80" x2="800" y2="80" stroke="#1E3460" stroke-width="1"/>
-          <line x1="0" y1="120" x2="800" y2="120" stroke="#1E3460" stroke-width="1"/>
-          <line x1="0" y1="160" x2="800" y2="160" stroke="#1E3460" stroke-width="1"/>
+          <line x1="0" y1="40" x2="800" y2="40" stroke="#374151" stroke-width="1"/>
+          <line x1="0" y1="80" x2="800" y2="80" stroke="#374151" stroke-width="1"/>
+          <line x1="0" y1="120" x2="800" y2="120" stroke="#374151" stroke-width="1"/>
+          <line x1="0" y1="160" x2="800" y2="160" stroke="#374151" stroke-width="1"/>
           <!-- Asia line -->
-          <polyline points="0,140 67,135 133,120 200,125 267,110 333,115 400,100 467,105 533,90 600,85 667,80 733,75 800,65" fill="none" stroke="#4E9FFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="0,140 67,135 133,120 200,125 267,110 333,115 400,100 467,105 533,90 600,85 667,80 733,75 800,65" fill="none" stroke="#A78BFA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           <polyline points="0,140 67,135 133,120 200,125 267,110 333,115 400,100 467,105 533,90 600,85 667,80 733,75 800,65 800,200 0,200" fill="url(#g1)"/>
           <!-- Europe line -->
-          <polyline points="0,130 67,128 133,115 200,120 267,108 333,112 400,98 467,102 533,88 600,82 667,78 733,72 800,62" fill="none" stroke="#00C896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="0,130 67,128 133,115 200,120 267,108 333,112 400,98 467,102 533,88 600,82 667,78 733,72 800,62" fill="none" stroke="#818CF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           <polyline points="0,130 67,128 133,115 200,120 267,108 333,112 400,98 467,102 533,88 600,82 667,78 733,72 800,62 800,200 0,200" fill="url(#g2)"/>
         </svg>
         <div style="display:flex;gap:20px;margin-top:8px">
@@ -1094,28 +1094,28 @@ body {
         <div class="card-body">
           <svg width="100%" height="220" viewBox="0 0 700 220" preserveAspectRatio="none">
             <defs>
-              <linearGradient id="fcGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E9FFF" stop-opacity=".25"/><stop offset="100%" stop-color="#4E9FFF" stop-opacity="0"/></linearGradient>
-              <linearGradient id="fcRangeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E9FFF" stop-opacity=".1"/><stop offset="100%" stop-color="#4E9FFF" stop-opacity=".05"/></linearGradient>
+              <linearGradient id="fcGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A78BFA" stop-opacity=".25"/><stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/></linearGradient>
+              <linearGradient id="fcRangeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A78BFA" stop-opacity=".1"/><stop offset="100%" stop-color="#A78BFA" stop-opacity=".05"/></linearGradient>
             </defs>
-            <line x1="0" y1="44" x2="700" y2="44" stroke="#1E3460" stroke-width="1"/>
-            <line x1="0" y1="88" x2="700" y2="88" stroke="#1E3460" stroke-width="1"/>
-            <line x1="0" y1="132" x2="700" y2="132" stroke="#1E3460" stroke-width="1"/>
-            <line x1="0" y1="176" x2="700" y2="176" stroke="#1E3460" stroke-width="1"/>
+            <line x1="0" y1="44" x2="700" y2="44" stroke="#374151" stroke-width="1"/>
+            <line x1="0" y1="88" x2="700" y2="88" stroke="#374151" stroke-width="1"/>
+            <line x1="0" y1="132" x2="700" y2="132" stroke="#374151" stroke-width="1"/>
+            <line x1="0" y1="176" x2="700" y2="176" stroke="#374151" stroke-width="1"/>
             <!-- Forecast range -->
-            <line x1="420" y1="10" x2="420" y2="210" stroke="#1E3460" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="425" y="22" fill="#4A5A7A" font-size="10" font-family="Barlow">FORECAST</text>
+            <line x1="420" y1="10" x2="420" y2="210" stroke="#374151" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="425" y="22" fill="#6B7280" font-size="10" font-family="Barlow">FORECAST</text>
             <!-- Actual line -->
-            <polyline points="0,160 58,152 117,138 175,142 233,130 292,134 350,120 408,118" fill="none" stroke="#4E9FFF" stroke-width="2.5" stroke-linecap="round"/>
+            <polyline points="0,160 58,152 117,138 175,142 233,130 292,134 350,120 408,118" fill="none" stroke="#A78BFA" stroke-width="2.5" stroke-linecap="round"/>
             <polyline points="0,160 58,152 117,138 175,142 233,130 292,134 350,120 408,118 408,210 0,210" fill="url(#fcGrad)"/>
             <!-- Forecast line (dashed) -->
-            <polyline points="408,118 466,112 525,105 583,98 641,88 700,80" fill="none" stroke="#4E9FFF" stroke-width="2.5" stroke-dasharray="6,3" stroke-linecap="round"/>
+            <polyline points="408,118 466,112 525,105 583,98 641,88 700,80" fill="none" stroke="#A78BFA" stroke-width="2.5" stroke-dasharray="6,3" stroke-linecap="round"/>
             <!-- Confidence range -->
-            <polygon points="408,118 466,108 525,98 583,88 641,75 700,65 700,95 641,100 583,108 525,115 466,120 408,118" fill="rgba(78,159,255,0.1)"/>
+            <polygon points="408,118 466,108 525,98 583,88 641,75 700,65 700,95 641,100 583,108 525,115 466,120 408,118" fill="rgba(178,74,46,0.1)"/>
           </svg>
           <div style="display:flex;gap:20px;margin-top:4px;font-size:11px;color:var(--silver)">
             <span><span style="display:inline-block;width:20px;height:2px;background:var(--fer);vertical-align:middle;margin-right:4px"></span>Actual</span>
             <span><span style="display:inline-block;width:20px;height:2px;background:var(--fer);vertical-align:middle;margin-right:4px;border-top:2px dashed var(--fer)"></span>Forecast (Mid)</span>
-            <span><span style="display:inline-block;width:20px;height:8px;background:rgba(78,159,255,.15);vertical-align:middle;margin-right:4px;border-radius:2px"></span>Confidence Range</span>
+            <span><span style="display:inline-block;width:20px;height:8px;background:rgba(167,139,250,.12);vertical-align:middle;margin-right:4px;border-radius:2px"></span>Confidence Range</span>
           </div>
         </div>
       </div>
@@ -1357,7 +1357,7 @@ const metals = [
   { name:"Molybdenum",      cat:"ene", catLabel:"Energy Trans.", price:"42,000",unit:"$/MT", mom:"+0.9", region:"Global" },
 ];
 
-const catColors = { fer:"var(--fer)", nfe:"var(--nfe)", pre:"var(--pre)", ene:"var(--ene)" };
+const catColors = { fer:"#A78BFA", nfe:"#818CF8", pre:"#C4B5FD", ene:"#7C3AED" };
 
 const disruptions = [
   { name:"JSW Steel Vijayanagar", loc:"India · Blast Furnace", type:"Unplanned", time:"1h ago", sev:"high", metal:"HRC / Rebar" },
@@ -1579,7 +1579,7 @@ const indexModalData = {
     name: "Ferrous Metals Index",
     sub: "Index Price · IMM-MI (Jan 2020 = 100)",
     color: "var(--fer)",
-    colorHex: "#4E9FFF",
+    colorHex: "#A78BFA",
     currentPrice: "187.4",
     change1m: "+2.3%",
     changeDir: "up",
@@ -1618,7 +1618,7 @@ const indexModalData = {
     name: "Non-Ferrous Metals Index",
     sub: "Index Price · IMM-MI (Jan 2020 = 100)",
     color: "var(--nfe)",
-    colorHex: "#00C896",
+    colorHex: "#818CF8",
     currentPrice: "162.8",
     change1m: "+1.1%",
     changeDir: "up",
@@ -1655,7 +1655,7 @@ const indexModalData = {
     name: "Precious Metals Index",
     sub: "Index Price · IMM-MI (Jan 2020 = 100)",
     color: "var(--pre)",
-    colorHex: "#FFB830",
+    colorHex: "#C4B5FD",
     currentPrice: "241.3",
     change1m: "+3.8%",
     changeDir: "up",
@@ -1692,7 +1692,7 @@ const indexModalData = {
     name: "Energy Transition Index",
     sub: "Index Price · IMM-MI (Jan 2020 = 100)",
     color: "var(--ene)",
-    colorHex: "#FF6B35",
+    colorHex: "#7C3AED",
     currentPrice: "134.6",
     change1m: "−0.4%",
     changeDir: "down",
@@ -1880,11 +1880,11 @@ function setImTimeRange(btn, range) {
       <!-- Chart Legend -->
       <div style="display:flex;gap:20px;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--silver)">
-          <svg width="20" height="3"><line x1="0" y1="1.5" x2="20" y2="1.5" id="legend-hist" stroke="#4E9FFF" stroke-width="2.5"/></svg>
+          <svg width="20" height="3"><line x1="0" y1="1.5" x2="20" y2="1.5" id="legend-hist" stroke="#A78BFA" stroke-width="2.5"/></svg>
           Historical
         </div>
         <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--silver)">
-          <svg width="20" height="3"><line x1="0" y1="1.5" x2="20" y2="1.5" id="legend-fc" stroke="#4E9FFF" stroke-width="2" stroke-dasharray="4,2"/></svg>
+          <svg width="20" height="3"><line x1="0" y1="1.5" x2="20" y2="1.5" id="legend-fc" stroke="#A78BFA" stroke-width="2" stroke-dasharray="4,2"/></svg>
           Forecast
         </div>
       </div>
@@ -1894,37 +1894,37 @@ function setImTimeRange(btn, range) {
         <svg id="imChart" width="100%" height="220" viewBox="0 0 1200 340" preserveAspectRatio="none" style="display:block">
           <defs>
             <linearGradient id="im-hist-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#4E9FFF" stop-opacity="0.25"/>
-              <stop offset="100%" stop-color="#4E9FFF" stop-opacity="0"/>
+              <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
             </linearGradient>
           </defs>
           <!-- Grid lines -->
-          <line x1="40" y1="60"  x2="1160" y2="60"  stroke="#1E3460" stroke-width="1"/>
-          <line x1="40" y1="120" x2="1160" y2="120" stroke="#1E3460" stroke-width="1"/>
-          <line x1="40" y1="180" x2="1160" y2="180" stroke="#1E3460" stroke-width="1"/>
-          <line x1="40" y1="240" x2="1160" y2="240" stroke="#1E3460" stroke-width="1"/>
-          <line x1="40" y1="300" x2="1160" y2="300" stroke="#1E3460" stroke-width="1"/>
+          <line x1="40" y1="60"  x2="1160" y2="60"  stroke="#374151" stroke-width="1"/>
+          <line x1="40" y1="120" x2="1160" y2="120" stroke="#374151" stroke-width="1"/>
+          <line x1="40" y1="180" x2="1160" y2="180" stroke="#374151" stroke-width="1"/>
+          <line x1="40" y1="240" x2="1160" y2="240" stroke="#374151" stroke-width="1"/>
+          <line x1="40" y1="300" x2="1160" y2="300" stroke="#374151" stroke-width="1"/>
           <!-- Forecast divider -->
-          <line id="im-fc-divider" x1="810" y1="40" x2="810" y2="320" stroke="#1E3460" stroke-width="1" stroke-dasharray="4,3"/>
-          <text x="816" y="54" fill="#4A5A7A" font-size="18" font-family="Barlow">FORECAST →</text>
+          <line id="im-fc-divider" x1="810" y1="40" x2="810" y2="320" stroke="#374151" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="816" y="54" fill="#6B7280" font-size="18" font-family="Barlow">FORECAST →</text>
           <!-- Forecast confidence band -->
-          <polygon id="im-fc-band" points="" fill="#4E9FFF" opacity="0.08"/>
+          <polygon id="im-fc-band" points="" fill="#A78BFA" opacity="0.08"/>
           <!-- Historical fill -->
           <polygon id="im-hist-fill" points="" fill="url(#im-hist-grad)" opacity="1"/>
           <!-- Historical line -->
-          <polyline id="im-hist-line" points="" fill="none" stroke="#4E9FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline id="im-hist-line" points="" fill="none" stroke="#A78BFA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
           <!-- Forecast line (dashed) -->
-          <polyline id="im-fc-line" points="" fill="none" stroke="#4E9FFF" stroke-width="2.5" stroke-dasharray="8,4" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline id="im-fc-line" points="" fill="none" stroke="#A78BFA" stroke-width="2.5" stroke-dasharray="8,4" stroke-linecap="round" stroke-linejoin="round"/>
           <!-- Month labels -->
-          <text x="40"   y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Jan</text>
-          <text x="180"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Feb</text>
-          <text x="320"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Mar</text>
-          <text x="460"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Apr</text>
-          <text x="600"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">May</text>
-          <text x="740"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Jun</text>
-          <text x="880"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Jul</text>
-          <text x="1020" y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Aug</text>
-          <text x="1160" y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Sep</text>
+          <text x="40"   y="328" fill="#6B7280" font-size="16" font-family="Barlow" text-anchor="middle">Jan</text>
+          <text x="180"  y="328" fill="#6B7280" font-size="16" font-family="Barlow" text-anchor="middle">Feb</text>
+          <text x="320"  y="328" fill="#6B7280" font-size="16" font-family="Barlow" text-anchor="middle">Mar</text>
+          <text x="460"  y="328" fill="#6B7280" font-size="16" font-family="Barlow" text-anchor="middle">Apr</text>
+          <text x="600"  y="328" fill="#6B7280" font-size="16" font-family="Barlow" text-anchor="middle">May</text>
+          <text x="740"  y="328" fill="#6B7280" font-size="16" font-family="Barlow" text-anchor="middle">Jun</text>
+          <text x="880"  y="328" fill="#6B7280" font-size="16" font-family="Barlow" text-anchor="middle">Jul</text>
+          <text x="1020" y="328" fill="#6B7280" font-size="16" font-family="Barlow" text-anchor="middle">Aug</text>
+          <text x="1160" y="328" fill="#6B7280" font-size="16" font-family="Barlow" text-anchor="middle">Sep</text>
         </svg>
       </div>
 
@@ -2016,7 +2016,7 @@ function setImTimeRange(btn, range) {
 /* ── INDEX MODAL STYLES ──────────────────────── */
 .im-overlay {
   display:none; position:fixed; inset:0; z-index:500;
-  background:rgba(6,13,31,0.85); backdrop-filter:blur(4px);
+  background:rgba(8,10,18,0.92); backdrop-filter:blur(4px);
   align-items:center; justify-content:center;
   padding:20px;
 }
@@ -2027,7 +2027,7 @@ function setImTimeRange(btn, range) {
   background:var(--bg2); border:1px solid var(--border);
   border-radius:14px; width:100%; max-width:900px;
   max-height:92vh; overflow-y:auto;
-  box-shadow:0 40px 100px rgba(0,0,0,0.7);
+  box-shadow:0 40px 100px rgba(5,8,18,0.85);
   animation:slideUp .25s ease;
 }
 @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
