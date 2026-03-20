@@ -2296,91 +2296,90 @@ function setImTimeRange(btn, range) {
       <!-- FULL WIDTH CHART - Ferrous Only IMM-MI Style -->
         <!-- Chart SVG -->
         <div style="position:relative;background:var(--bg3);border-radius:8px;border:1px solid var(--border);padding:10px 6px 4px;">
-          <svg id="imChart" width="100%" height="210" viewBox="0 0 1300 340" preserveAspectRatio="none" style="display:block;">
+          <svg id="imChart" width="100%" height="210" viewBox="0 0 1300 310" preserveAspectRatio="none" style="display:block;">
             <defs>
               <linearGradient id="im-hist-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.25"/>
-                <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.02"/>
+                <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.03"/>
               </linearGradient>
             </defs>
 
             <!-- Y-axis rotated label -->
-            <text transform="rotate(-90,18,130)" x="18" y="130" fill="#9CA3AF" font-size="14" font-family="Barlow" text-anchor="middle">IMM-MI Jan 2021=100</text>
+            <text transform="rotate(-90,16,124)" x="16" y="124" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">IMM-MI Jan 2021=100</text>
 
-            <!-- Y-axis values: range 50-200 -->
-            <text x="76" y="24"  fill="#9CA3AF" font-size="14" font-family="JetBrains Mono" text-anchor="end">200.00</text>
-            <text x="76" y="76"  fill="#9CA3AF" font-size="14" font-family="JetBrains Mono" text-anchor="end">175.00</text>
-            <text x="76" y="128" fill="#9CA3AF" font-size="14" font-family="JetBrains Mono" text-anchor="end">150.00</text>
-            <text x="76" y="180" fill="#9CA3AF" font-size="14" font-family="JetBrains Mono" text-anchor="end">125.00</text>
-            <text x="76" y="232" fill="#9CA3AF" font-size="14" font-family="JetBrains Mono" text-anchor="end">100.00</text>
+            <!-- Y-axis values -->
+            <text x="76" y="24"  fill="#9CA3AF" font-size="13" font-family="JetBrains Mono" text-anchor="end">200.00</text>
+            <text x="76" y="76"  fill="#9CA3AF" font-size="13" font-family="JetBrains Mono" text-anchor="end">175.00</text>
+            <text x="76" y="128" fill="#9CA3AF" font-size="13" font-family="JetBrains Mono" text-anchor="end">150.00</text>
+            <text x="76" y="180" fill="#9CA3AF" font-size="13" font-family="JetBrains Mono" text-anchor="end">125.00</text>
+            <text x="76" y="232" fill="#9CA3AF" font-size="13" font-family="JetBrains Mono" text-anchor="end">100.00</text>
 
             <!-- Grid lines -->
-            <line x1="80" y1="20"  x2="1230" y2="20"  stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
-            <line x1="80" y1="72"  x2="1230" y2="72"  stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
-            <line x1="80" y1="124" x2="1230" y2="124" stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
-            <line x1="80" y1="176" x2="1230" y2="176" stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
-            <line x1="80" y1="228" x2="1230" y2="228" stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
+            <line x1="80" y1="20"  x2="1220" y2="20"  stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
+            <line x1="80" y1="72"  x2="1220" y2="72"  stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
+            <line x1="80" y1="124" x2="1220" y2="124" stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
+            <line x1="80" y1="176" x2="1220" y2="176" stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
+            <line x1="80" y1="228" x2="1220" y2="228" stroke="#374151" stroke-width="0.7" stroke-dasharray="5,4"/>
 
-            <!-- Y-axis line -->
-            <line x1="80" y1="8" x2="80" y2="232" stroke="#6B7280" stroke-width="1.2"/>
-            <!-- X-axis line -->
-            <line x1="80" y1="232" x2="1230" y2="232" stroke="#6B7280" stroke-width="1.2"/>
+            <!-- Axes -->
+            <line x1="80" y1="8"   x2="80"   y2="230" stroke="#6B7280" stroke-width="1.2"/>
+            <line x1="80" y1="228" x2="1220" y2="228" stroke="#6B7280" stroke-width="1.2"/>
 
-            <!-- Ferrous fill -->
+            <!-- Fill area — exact same points as line + closing to bottom -->
             <polygon id="im-hist-fill"
-              points="80,76 172,72 264,65 356,69 448,62 540,66 632,59 724,63 816,55 908,51 1000,48 1092,44 1184,38 1184,232 80,232"
+              points="80,103.2 172,97.0 264,86.6 356,92.8 448,82.4 540,88.6 632,78.2 724,84.5 816,72.0 908,65.8 1000,61.6 1092,55.4 1184,47.0 1184,228 80,228"
               fill="url(#im-hist-grad)"/>
 
-            <!-- Ferrous line -->
+            <!-- Line — exact same X,Y as fill top edge -->
             <polyline id="im-hist-line"
-              points="80,76 172,72 264,65 356,69 448,62 540,66 632,59 724,63 816,55 908,51 1000,48 1092,44 1184,38"
+              points="80,103.2 172,97.0 264,86.6 356,92.8 448,82.4 540,88.6 632,78.2 724,84.5 816,72.0 908,65.8 1000,61.6 1092,55.4 1184,47.0"
               fill="none" stroke="#7C3AED" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 
             <!-- Forecast dashed -->
-            <polyline id="im-fc-line" points="1184,38 1230,34" fill="none" stroke="#7C3AED" stroke-width="2" stroke-dasharray="7,4"/>
-            <polygon id="im-fc-band" points="1184,38 1230,32 1230,38 1184,38" fill="#7C3AED" opacity="0.1"/>
+            <polyline id="im-fc-line" points="1184,47.0 1220,43.0" fill="none" stroke="#7C3AED" stroke-width="2" stroke-dasharray="7,4"/>
+            <polygon  id="im-fc-band" points="1184,47.0 1220,41 1220,46 1184,47.0" fill="#7C3AED" opacity="0.1"/>
 
-            <!-- Data point dots -->
-            <circle cx="80"   cy="76"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="172"  cy="72"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="264"  cy="65"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="356"  cy="69"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="448"  cy="62"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="540"  cy="66"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="632"  cy="59"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="724"  cy="63"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="816"  cy="55"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="908"  cy="51"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="1000" cy="48"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="1092" cy="44"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="1184" cy="38"  r="5" fill="#7C3AED" stroke="var(--bg3)" stroke-width="2"/>
+            <!-- Dots — EXACT same coords as line points -->
+            <circle cx="80"   cy="103.2" r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="172"  cy="97.0"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="264"  cy="86.6"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="356"  cy="92.8"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="448"  cy="82.4"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="540"  cy="88.6"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="632"  cy="78.2"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="724"  cy="84.5"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="816"  cy="72.0"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="908"  cy="65.8"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="1000" cy="61.6"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="1092" cy="55.4"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="1184" cy="47.0"  r="5"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="2"/>
 
-            <!-- X-axis labels - properly spaced below x-axis line -->
-            <text x="80"   y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Jan-25</text>
-            <text x="172"  y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Feb-25</text>
-            <text x="264"  y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Mar-25</text>
-            <text x="356"  y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Apr-25</text>
-            <text x="448"  y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">May-25</text>
-            <text x="540"  y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Jun-25</text>
-            <text x="632"  y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Jul-25</text>
-            <text x="724"  y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Aug-25</text>
-            <text x="816"  y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Sep-25</text>
-            <text x="908"  y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Oct-25</text>
-            <text x="1000" y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Nov-25</text>
-            <text x="1092" y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Dec-25</text>
-            <text x="1184" y="248" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">Jan-26</text>
+            <!-- X-axis labels -->
+            <text x="80"   y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Jan-25</text>
+            <text x="172"  y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Feb-25</text>
+            <text x="264"  y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Mar-25</text>
+            <text x="356"  y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Apr-25</text>
+            <text x="448"  y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">May-25</text>
+            <text x="540"  y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Jun-25</text>
+            <text x="632"  y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Jul-25</text>
+            <text x="724"  y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Aug-25</text>
+            <text x="816"  y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Sep-25</text>
+            <text x="908"  y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Oct-25</text>
+            <text x="1000" y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Nov-25</text>
+            <text x="1092" y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Dec-25</text>
+            <text x="1184" y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Jan-26</text>
 
-            <!-- Source - clearly below x labels -->
-            <text x="80"   y="272" fill="#9CA3AF" font-size="13" font-family="Barlow" font-weight="600">Source: Procurement Resource</text>
-            <text x="80"   y="288" fill="#9CA3AF" font-size="11" font-family="Barlow">Notes: Ferrous Metal Index= HRC, CRC, Rebar, Wire Rod, and MS Pipe Avg. Prices Jan.-2021 = 100</text>
+            <!-- Source + Notes below x labels -->
+            <text x="80"  y="264" fill="#9CA3AF" font-size="12" font-family="Barlow" font-weight="600">Source: Procurement Resource</text>
+            <text x="80"  y="278" fill="#9CA3AF" font-size="10" font-family="Barlow">Notes: Ferrous Metal Index= HRC, CRC, Rebar, Wire Rod, and MS Pipe Avg. Prices Jan.-2021 = 100</text>
 
-            <!-- Units - bottom right, separated from Excel icon -->
-            <text x="1110" y="272" fill="#9CA3AF" font-size="13" font-family="Barlow" font-weight="600" text-anchor="end">Units: IMM-MI Jan 2021=100</text>
+            <!-- Units text — bottom right, left of Excel icon -->
+            <text x="1145" y="264" fill="#9CA3AF" font-size="12" font-family="Barlow" font-weight="600" text-anchor="end">Units: IMM-MI Jan 2021=100</text>
 
-            <!-- Excel icon - bottom right corner, clear of units text -->
-            <g onclick="downloadIndexExcel()" style="cursor:pointer;" transform="translate(1118,260)">
-              <rect x="0" y="0" width="30" height="30" rx="4" fill="#217346"/>
-              <text x="15" y="21" fill="white" font-size="16" font-family="Arial" font-weight="800" text-anchor="middle">X</text>
+            <!-- Excel icon — bottom right corner -->
+            <g onclick="downloadIndexExcel()" style="cursor:pointer;" transform="translate(1152,252)">
+              <rect x="0" y="0" width="32" height="32" rx="4" fill="#217346"/>
+              <text x="16" y="22" fill="white" font-size="17" font-family="Arial" font-weight="800" text-anchor="middle">X</text>
             </g>
           </svg>
         </div>
