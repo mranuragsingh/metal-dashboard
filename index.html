@@ -216,7 +216,7 @@ body {
 
 /* ── GRID ────────────────────────────────────── */
 .grid { display:grid; gap:16px; }
-.grid-4 { grid-template-columns:repeat(4,1fr); }
+.grid-4 { grid-template-columns:repeat(4,1fr) !important; }
 .grid-3 { grid-template-columns:repeat(3,1fr); }
 .grid-2 { grid-template-columns:repeat(2,1fr); }
 .grid-main { grid-template-columns:1fr 340px; }
@@ -583,8 +583,7 @@ body {
 .region-pill.active { background:var(--bg4); color:var(--white); border-color:var(--gold); }
 
 /* ── RESPONSIVE ──────────────────────────────── */
-@media(max-width:1200px) {
-  .grid-4 { grid-template-columns:repeat(2,1fr); }
+@media(max-width:700px) {
   .product-grid { grid-template-columns:repeat(2,1fr); }
 }
 
@@ -679,7 +678,7 @@ body {
 
 .im-tabs {
   display:flex; gap:0; border-bottom:1px solid var(--border);
-  overflow-x:auto; padding:0 20px;
+  overflow-x:auto; padding:0 20px; margin-top:0;
 }
 .im-tab {
   background:none; border:none; color:var(--dim);
@@ -690,7 +689,7 @@ body {
 .im-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
 .im-tab:hover:not(.active) { color:var(--silver); }
 
-.im-tab-body { padding:8px 20px 16px; }
+.im-tab-body { padding:4px 20px 12px; }
 .im-tab-text { font-size:13px; line-height:1.7; color:var(--silver); }
 .im-tab-text strong { color:var(--gold); }
 
@@ -902,7 +901,7 @@ body {
     </div>
 
     <!-- KPI Row -->
-    <div class="grid grid-4" style="margin-bottom:20px">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
       <div class="kpi-card kpi-fer" onclick="openIndexModal('fer')" style="cursor:pointer">
         <div class="kpi-label">Ferrous Index</div>
         <div class="kpi-val" style="color:var(--fer)">187.4</div>
@@ -966,16 +965,39 @@ body {
       <!-- Price movements heatmap + table -->
       <div>
         <div class="card" style="margin-bottom:16px">
-          <div class="card-header">
+          <div class="card-header" style="flex-wrap:wrap;gap:8px;">
             <span class="card-title">Price Movement Heatmap</span>
-            <div style="display:flex;gap:6px">
-              <button class="tab active" onclick="setTab(this,'hm')">Daily</button>
-              <button class="tab" onclick="setTab(this,'hm')">Weekly</button>
-              <button class="tab" onclick="setTab(this,'hm')">Monthly</button>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <!-- Region Filter -->
+              <div style="display:flex;gap:3px;background:var(--bg3);border-radius:6px;padding:3px;border:1px solid var(--border);">
+                <button class="hm-region active" onclick="setHmRegion('all',this)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;background:var(--bg2);color:var(--white);">All</button>
+                <button class="hm-region" onclick="setHmRegion('asia',this)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;background:none;color:var(--dim);">Asia</button>
+                <button class="hm-region" onclick="setHmRegion('namerica',this)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;background:none;color:var(--dim);">N. America</button>
+                <button class="hm-region" onclick="setHmRegion('europe',this)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;background:none;color:var(--dim);">Europe</button>
+              </div>
+              <!-- Timeframe Filter -->
+              <div style="display:flex;gap:3px;background:var(--bg3);border-radius:6px;padding:3px;border:1px solid var(--border);">
+                <button class="hm-time active" onclick="setHmTime('daily',this)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;background:var(--bg2);color:var(--white);">Daily</button>
+                <button class="hm-time" onclick="setHmTime('weekly',this)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;background:none;color:var(--dim);">Weekly</button>
+                <button class="hm-time" onclick="setHmTime('monthly',this)" style="font-size:11px;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;background:none;color:var(--dim);">Monthly</button>
+              </div>
             </div>
           </div>
           <div class="card-body">
-            <div class="heatmap-grid" id="heatmapGrid"></div>
+            <div id="hm-region-label" style="font-size:10px;color:var(--gold);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">All Regions · Daily</div>
+            <div class="heatmap-grid" id="heatmapGrid" style="grid-template-columns:repeat(5,1fr);gap:8px;"></div>
+            <div style="display:flex;gap:16px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap;align-items:center;">
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--dim);">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(16,185,129,0.3);border:1px solid rgba(16,185,129,0.4);"></span> Price Up
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--dim);">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(239,68,68,0.3);border:1px solid rgba(239,68,68,0.4);"></span> Price Down
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--dim);">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.3);"></span> Flat
+              </div>
+              <span style="margin-left:auto;font-size:10px;color:var(--dim);">% change vs previous period</span>
+            </div>
           </div>
         </div>
 
@@ -1599,16 +1621,218 @@ for(let i=0;i<2;i++) tickerData.forEach(m=>{
 tickerEl.innerHTML = tickerHTML;
 
 // Heatmap
-const hmMetals = ["Gold","Silver","Copper","HRC","Rebar","Aluminium","Nickel","Lithium Carb.","Cobalt","Manganese","Zinc","Lead","Platinum","Titanium","Tin"];
-const hmVals   = [3.8,4.1,1.2,1.9,3.1,0.8,1.6,-2.1,-1.8,0.5,0.7,0.5,2.6,0.8,0.4];
-const hmGrid = document.getElementById('heatmapGrid');
-hmMetals.forEach((m,i)=>{
-  const v = hmVals[i];
-  const intensity = Math.min(Math.abs(v)/5,1);
-  const bg = v>0 ? `rgba(16,185,129,${0.1+intensity*0.25})` : v<0 ? `rgba(239,68,68,${0.1+intensity*0.25})` : 'rgba(245,158,11,0.1)';
-  const col = v>0?'var(--up)':v<0?'var(--down)':'var(--flat)';
-  hmGrid.innerHTML += `<div class="hm-cell" style="background:${bg}"><div class="hm-name" style="color:${col}">${m}</div><div class="hm-val" style="color:${col}">${v>0?'+':''}${v}%</div></div>`;
-});
+// ── Heatmap Data: region × timeframe ─────────
+// Structure: hmData[region][timeframe] = [{name, cat, val}]
+// Regions: all, asia, namerica, europe
+// Timeframes: daily, weekly, monthly
+
+const hmData = {
+  all: {
+    daily: [
+      { name:"Gold",      cat:"Precious",     val:+3.8 },
+      { name:"Silver",    cat:"Precious",     val:+4.1 },
+      { name:"Platinum",  cat:"Precious",     val:+2.6 },
+      { name:"Palladium", cat:"Precious",     val:+2.9 },
+      { name:"Copper",    cat:"Non-Ferrous",  val:+1.2 },
+      { name:"Aluminium", cat:"Non-Ferrous",  val:+0.8 },
+      { name:"Zinc",      cat:"Non-Ferrous",  val:+0.7 },
+      { name:"Lead",      cat:"Non-Ferrous",  val:+0.5 },
+      { name:"Nickel",    cat:"Energy Trans.",val:+1.6 },
+      { name:"Tin",       cat:"Energy Trans.",val:+0.4 },
+    ],
+    weekly: [
+      { name:"HRC",            cat:"Ferrous",      val:+1.9 },
+      { name:"CRC",            cat:"Ferrous",      val:+1.7 },
+      { name:"Rebar (TMT)",    cat:"Ferrous",      val:+3.1 },
+      { name:"Wire Rod",       cat:"Ferrous",      val:+2.8 },
+      { name:"Merchant Bar",   cat:"Ferrous",      val:+2.2 },
+      { name:"MS Plate",       cat:"Ferrous",      val:+3.0 },
+      { name:"Stainless Steel",cat:"Ferrous",      val:+1.1 },
+      { name:"Struct. Beams",  cat:"Ferrous",      val:+2.5 },
+      { name:"Angles",         cat:"Ferrous",      val:+2.0 },
+      { name:"Cobalt",         cat:"Energy Trans.",val:-1.8 },
+      { name:"Lithium Carb.",  cat:"Energy Trans.",val:-2.1 },
+    ],
+    monthly: [
+      { name:"Manganese",  cat:"Energy Trans.", val:+0.5 },
+      { name:"Chromium",   cat:"Energy Trans.", val:+0.3 },
+      { name:"Titanium",   cat:"Energy Trans.", val:+0.8 },
+      { name:"Tungsten",   cat:"Energy Trans.", val:+0.4 },
+      { name:"Vanadium",   cat:"Energy Trans.", val:-0.6 },
+      { name:"Molybdenum", cat:"Energy Trans.", val:+0.9 },
+    ],
+  },
+  asia: {
+    daily: [
+      { name:"Gold",      cat:"Precious",     val:+3.5 },
+      { name:"Silver",    cat:"Precious",     val:+3.9 },
+      { name:"Platinum",  cat:"Precious",     val:+2.4 },
+      { name:"Palladium", cat:"Precious",     val:+2.7 },
+      { name:"Copper",    cat:"Non-Ferrous",  val:+1.4 },
+      { name:"Aluminium", cat:"Non-Ferrous",  val:+0.9 },
+      { name:"Zinc",      cat:"Non-Ferrous",  val:+0.8 },
+      { name:"Lead",      cat:"Non-Ferrous",  val:+0.6 },
+      { name:"Nickel",    cat:"Energy Trans.",val:+1.8 },
+      { name:"Tin",       cat:"Energy Trans.",val:+0.5 },
+    ],
+    weekly: [
+      { name:"HRC",            cat:"Ferrous",      val:+2.3 },
+      { name:"CRC",            cat:"Ferrous",      val:+2.0 },
+      { name:"Rebar (TMT)",    cat:"Ferrous",      val:+3.1 },
+      { name:"Wire Rod",       cat:"Ferrous",      val:+2.8 },
+      { name:"Merchant Bar",   cat:"Ferrous",      val:+2.2 },
+      { name:"MS Plate",       cat:"Ferrous",      val:+3.0 },
+      { name:"Stainless Steel",cat:"Ferrous",      val:+1.2 },
+      { name:"Struct. Beams",  cat:"Ferrous",      val:+2.6 },
+      { name:"Angles",         cat:"Ferrous",      val:+2.1 },
+      { name:"Cobalt",         cat:"Energy Trans.",val:-1.9 },
+      { name:"Lithium Carb.",  cat:"Energy Trans.",val:-2.1 },
+    ],
+    monthly: [
+      { name:"Manganese",  cat:"Energy Trans.", val:+0.6 },
+      { name:"Chromium",   cat:"Energy Trans.", val:+0.4 },
+      { name:"Titanium",   cat:"Energy Trans.", val:+0.9 },
+      { name:"Tungsten",   cat:"Energy Trans.", val:+0.5 },
+      { name:"Vanadium",   cat:"Energy Trans.", val:-0.5 },
+      { name:"Molybdenum", cat:"Energy Trans.", val:+1.0 },
+    ],
+  },
+  namerica: {
+    daily: [
+      { name:"Gold",      cat:"Precious",     val:+3.9 },
+      { name:"Silver",    cat:"Precious",     val:+4.2 },
+      { name:"Platinum",  cat:"Precious",     val:+2.7 },
+      { name:"Palladium", cat:"Precious",     val:+3.0 },
+      { name:"Copper",    cat:"Non-Ferrous",  val:+1.1 },
+      { name:"Aluminium", cat:"Non-Ferrous",  val:+0.7 },
+      { name:"Zinc",      cat:"Non-Ferrous",  val:+0.6 },
+      { name:"Lead",      cat:"Non-Ferrous",  val:+0.4 },
+      { name:"Nickel",    cat:"Energy Trans.",val:+1.5 },
+      { name:"Tin",       cat:"Energy Trans.",val:+0.3 },
+    ],
+    weekly: [
+      { name:"HRC",            cat:"Ferrous",      val:+1.9 },
+      { name:"CRC",            cat:"Ferrous",      val:+1.6 },
+      { name:"Rebar (TMT)",    cat:"Ferrous",      val:+2.8 },
+      { name:"Wire Rod",       cat:"Ferrous",      val:+2.5 },
+      { name:"Merchant Bar",   cat:"Ferrous",      val:+2.0 },
+      { name:"MS Plate",       cat:"Ferrous",      val:+2.7 },
+      { name:"Stainless Steel",cat:"Ferrous",      val:+1.0 },
+      { name:"Struct. Beams",  cat:"Ferrous",      val:+2.3 },
+      { name:"Angles",         cat:"Ferrous",      val:+1.8 },
+      { name:"Cobalt",         cat:"Energy Trans.",val:-1.7 },
+      { name:"Lithium Carb.",  cat:"Energy Trans.",val:-2.0 },
+    ],
+    monthly: [
+      { name:"Manganese",  cat:"Energy Trans.", val:+0.4 },
+      { name:"Chromium",   cat:"Energy Trans.", val:+0.2 },
+      { name:"Titanium",   cat:"Energy Trans.", val:+0.7 },
+      { name:"Tungsten",   cat:"Energy Trans.", val:+0.3 },
+      { name:"Vanadium",   cat:"Energy Trans.", val:-0.7 },
+      { name:"Molybdenum", cat:"Energy Trans.", val:+0.8 },
+    ],
+  },
+  europe: {
+    daily: [
+      { name:"Gold",      cat:"Precious",     val:+3.7 },
+      { name:"Silver",    cat:"Precious",     val:+4.0 },
+      { name:"Platinum",  cat:"Precious",     val:+2.5 },
+      { name:"Palladium", cat:"Precious",     val:+2.8 },
+      { name:"Copper",    cat:"Non-Ferrous",  val:+1.0 },
+      { name:"Aluminium", cat:"Non-Ferrous",  val:+0.6 },
+      { name:"Zinc",      cat:"Non-Ferrous",  val:+0.5 },
+      { name:"Lead",      cat:"Non-Ferrous",  val:+0.3 },
+      { name:"Nickel",    cat:"Energy Trans.",val:+1.4 },
+      { name:"Tin",       cat:"Energy Trans.",val:+0.3 },
+    ],
+    weekly: [
+      { name:"HRC",            cat:"Ferrous",      val:+1.5 },
+      { name:"CRC",            cat:"Ferrous",      val:+1.4 },
+      { name:"Rebar (TMT)",    cat:"Ferrous",      val:+2.5 },
+      { name:"Wire Rod",       cat:"Ferrous",      val:+2.2 },
+      { name:"Merchant Bar",   cat:"Ferrous",      val:+1.8 },
+      { name:"MS Plate",       cat:"Ferrous",      val:+2.4 },
+      { name:"Stainless Steel",cat:"Ferrous",      val:+0.9 },
+      { name:"Struct. Beams",  cat:"Ferrous",      val:+2.0 },
+      { name:"Angles",         cat:"Ferrous",      val:+1.6 },
+      { name:"Cobalt",         cat:"Energy Trans.",val:-1.6 },
+      { name:"Lithium Carb.",  cat:"Energy Trans.",val:-1.9 },
+    ],
+    monthly: [
+      { name:"Manganese",  cat:"Energy Trans.", val:+0.3 },
+      { name:"Chromium",   cat:"Energy Trans.", val:+0.2 },
+      { name:"Titanium",   cat:"Energy Trans.", val:+0.6 },
+      { name:"Tungsten",   cat:"Energy Trans.", val:+0.2 },
+      { name:"Vanadium",   cat:"Energy Trans.", val:-0.8 },
+      { name:"Molybdenum", cat:"Energy Trans.", val:+0.7 },
+    ],
+  },
+};
+
+// Active state
+let activeHmRegion = 'all';
+let activeHmTime   = 'daily';
+
+const catColor = {
+  "Precious":     "var(--pre)",
+  "Non-Ferrous":  "var(--nfe)",
+  "Ferrous":      "var(--fer)",
+  "Energy Trans.":"var(--ene)",
+};
+
+const regionLabels = { all:"All Regions", asia:"Asia Pacific", namerica:"North America", europe:"Europe" };
+const timeLabels   = { daily:"Daily", weekly:"Weekly", monthly:"Monthly" };
+
+function renderHeatmap() {
+  const grid = document.getElementById('heatmapGrid');
+  const label = document.getElementById('hm-region-label');
+  if(!grid) return;
+
+  const data = (hmData[activeHmRegion] || hmData.all)[activeHmTime] || [];
+
+  if(label) label.textContent = regionLabels[activeHmRegion] + ' · ' + timeLabels[activeHmTime];
+
+  grid.innerHTML = data.map(d => {
+    const v = d.val;
+    const intensity = Math.min(Math.abs(v)/5, 1);
+    const bg  = v>0 ? `rgba(16,185,129,${0.07+intensity*0.25})` : v<0 ? `rgba(239,68,68,${0.07+intensity*0.25})` : 'rgba(245,158,11,0.1)';
+    const col = v>0 ? 'var(--up)' : v<0 ? 'var(--down)' : 'var(--flat)';
+    const bdr = v>0 ? 'rgba(16,185,129,0.25)' : v<0 ? 'rgba(239,68,68,0.25)' : 'rgba(245,158,11,0.2)';
+    const cc  = catColor[d.cat] || 'var(--dim)';
+    return `<div style="background:${bg};border:1px solid ${bdr};border-radius:8px;padding:11px 10px;cursor:pointer;transition:transform .15s;"
+      onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+      <div style="font-size:11px;font-weight:700;color:var(--white);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.name}</div>
+      <div style="font-size:9px;color:${cc};margin-bottom:5px;font-weight:600;">${d.cat}</div>
+      <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:${col};">${v>0?'+':''}${v}%</div>
+    </div>`;
+  }).join('');
+}
+
+function setHmRegion(region, btn) {
+  activeHmRegion = region;
+  document.querySelectorAll('.hm-region').forEach(b => {
+    b.style.background = 'none';
+    b.style.color = 'var(--dim)';
+  });
+  if(btn) { btn.style.background = 'var(--bg2)'; btn.style.color = 'var(--white)'; }
+  renderHeatmap();
+}
+
+function setHmTime(time, btn) {
+  activeHmTime = time;
+  document.querySelectorAll('.hm-time').forEach(b => {
+    b.style.background = 'none';
+    b.style.color = 'var(--dim)';
+  });
+  if(btn) { btn.style.background = 'var(--bg2)'; btn.style.color = 'var(--white)'; }
+  renderHeatmap();
+}
+
+// Keep old switchHeatmap for compatibility
+function switchHeatmap(tab, btn) { setHmTime(tab, btn); }
+
+// Initial render
+renderHeatmap();
 
 // Metal rows
 const rowContainer = document.getElementById('metalRows');
@@ -1941,6 +2165,7 @@ function downloadIndexExcel() {
 const indexModalData = {
   fer: {
     name: "Ferrous Metals Index",
+    chartNotes: "Notes: Ferrous Metal Index= HRC, CRC, Rebar, Merchant Bar, & Beams. Region: Global. Avg. Prices Jan-2021 = 100",
     sub: "Index Price · IMM-MI (Jan 2021 = 100)",
     color: "var(--fer)",
     colorHex: "#4F46E5",
@@ -1952,13 +2177,14 @@ const indexModalData = {
     regions: ["Asia Pacific","North America","Europe"],
     countries: ["All Countries","India","China","Japan","South Korea","USA","Germany"],
     high52w: "192.6",
+    notes: "Notes: Ferrous Metal Index= HRC, CRC, Rebar, Merchant Bar, &amp; Beams. Region: Global. Avg. Prices Jan-2021 = 100",
     low52w: "161.3",
     avg3mVal: "183.1",
     unit: "IMM-MI",
     // SVG chart points: historical (Jan–Mar) + forecast (Apr–Jun)
-    histPoints: "42,195 157,188 292,175 427,180 562,168 697,171 810,158",
-    fcPoints:   "810,158 930,150 1050,140 1180,130",
-    fcBand:     "810,158 930,148 1050,136 1180,124 1180,138 1050,152 930,162 810,158",
+    histPoints: "80,103.2 172,97.0 264,86.6 356,92.8 448,82.4 540,88.6 632,78.2 724,84.5 816,72.0 908,65.8 1000,61.6 1092,55.4 1184,47.0",
+    fcPoints: "",
+    fcBand: "",
     xLabels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun"],
     commentary: "Ferrous metal prices rose sharply in Jan-26, with structural steel up <strong>+2.3% MoM</strong>. TMT Rebar led gains at +3.1% and MS Plate at +3.0%, driven by coking coal cost surge and strong seasonal demand from government infrastructure programs. India's safeguard duty policy continues to provide a firm domestic price floor.",
     supply: "Australian flooding disrupted coking coal mines, causing force majeure declarations and tightening seaborne availability. India's iron ore supply remained stable, but imports elevated ahead of Lunar New Year. JSW Steel announced a ₹2 lakh crore expansion targeting 50% capacity increase by decade's end.",
@@ -1980,6 +2206,7 @@ const indexModalData = {
   },
   nfe: {
     name: "Non-Ferrous Metals Index",
+    chartNotes: "Notes: Non-Ferrous Metal Index= Aluminium, Copper, Zinc & Lead. Region: Global. Avg. Prices Jan-2021 = 100",
     sub: "Index Price · IMM-MI (Jan 2021 = 100)",
     color: "var(--nfe)",
     colorHex: "#6366F1",
@@ -1991,12 +2218,13 @@ const indexModalData = {
     regions: ["LME Global","Asia Pacific","North America","Europe"],
     countries: ["All Countries","China","USA","Germany","Japan","South Korea"],
     high52w: "168.4",
+    notes: "Notes: Non-Ferrous Metal Index= Aluminium, Copper, Zinc &amp; Copper. Region: Global. Avg. Prices Jan-2021 = 100",
     low52w: "148.5",
     avg3mVal: "160.2",
     unit: "IMM-MI",
-    histPoints: "42,200 157,194 292,182 427,187 562,175 697,178 810,165",
-    fcPoints:   "810,165 930,158 1050,148 1180,140",
-    fcBand:     "810,165 930,156 1050,144 1180,133 1180,148 1050,158 930,165 810,165",
+    histPoints: "80,103.2 172,97.0 264,86.6 356,92.8 448,82.4 540,88.6 632,78.2 724,84.5 816,72.0 908,65.8 1000,61.6 1092,55.4 1184,47.0",
+    fcPoints: "",
+    fcBand: "",
     commentary: "Non-ferrous base metals traded in a narrow range in Jan-26 with mixed signals. Copper showed resilience at <strong>$9,690/MT</strong>, supported by LME inventory squeeze. Aluminium firm on Chinese smelter curtailments. Zinc and Lead stable on galvanizing and battery demand.",
     supply: "LME copper inventories hit multi-year lows — a critical supply signal. Chilean and Peruvian mine disruptions from social protests reduced Q4-25 output. Indonesian bauxite export ban tightened global aluminium supply. Grade depletion at major copper mines signals structural deficit by 2026–27.",
     demand: "Global EV sales projected at <strong>17M units</strong> in 2026. Each EV uses 3–4× more copper than an ICE vehicle. India's 500GW green energy target by 2030 requires extensive copper-intensive grid upgrades and transmission infrastructure investment.",
@@ -2017,6 +2245,7 @@ const indexModalData = {
   },
   pre: {
     name: "Precious Metals Index",
+    chartNotes: "Notes: Precious Metal Index= Gold, Silver, Platinum & Palladium. Region: Global. Avg. Prices Jan-2021 = 100",
     sub: "Index Price · IMM-MI (Jan 2021 = 100)",
     color: "var(--pre)",
     colorHex: "#8B5CF6",
@@ -2028,12 +2257,13 @@ const indexModalData = {
     regions: ["Global Spot","LBMA London","COMEX New York","Asia"],
     countries: ["All Countries","USA","UK","Switzerland","China","India"],
     high52w: "244.2",
+    notes: "Notes: Precious Metal Index= Gold, Silver, Platinum &amp; Palladium. Region: Global. Avg. Prices Jan-2021 = 100",
     low52w: "196.8",
     avg3mVal: "236.5",
     unit: "IMM-MI",
-    histPoints: "42,215 157,200 292,185 427,172 562,160 697,165 810,148",
-    fcPoints:   "810,148 930,138 1050,126 1180,112",
-    fcBand:     "810,148 930,136 1050,122 1180,106 1180,122 1050,138 930,150 810,148",
+    histPoints: "80,103.2 172,97.0 264,86.6 356,92.8 448,82.4 540,88.6 632,78.2 724,84.5 816,72.0 908,65.8 1000,61.6 1092,55.4 1184,47.0",
+    fcPoints: "",
+    fcBand: "",
     commentary: "Precious metals strengthened sharply in Jan-26 with Gold at <strong>$2,490/oz</strong> — a fresh high. Safe-haven demand intensified amid US-China trade tensions and geopolitical uncertainty. Central bank buying at 55-year record. Silver outperformed on dual investment and industrial demand.",
     supply: "Global gold mine production grew just 1.2% YoY in 2025 — tight supply vs surging investment demand. Secondary palladium from catalytic converter recycling provides ~30% of supply. Silver mine output broadly stable; recycling supply elevated from solar panel recycling uptick.",
     demand: "Central banks added <strong>1,037 tonnes</strong> of gold in 2025 — highest since 1967. India's RBI added 72 tonnes. Silver demand for solar PV panels projected +14% YoY in 2026 driven by renewable energy expansion globally. Investment ETF inflows to gold accelerating.",
@@ -2054,6 +2284,7 @@ const indexModalData = {
   },
   ene: {
     name: "Energy Transition Index",
+    chartNotes: "Notes: Energy Transition Index= Nickel, Lithium Carbonate, Cobalt, Tin, Manganese, Chromium, Titanium & Tungsten. Region: Global. Avg. Prices Jan-2021 = 100",
     sub: "Index Price · IMM-MI (Jan 2021 = 100)",
     color: "var(--ene)",
     colorHex: "#4F46E5",
@@ -2065,12 +2296,13 @@ const indexModalData = {
     regions: ["Global","China","LME","South America"],
     countries: ["All Countries","China","DRC","Chile","Indonesia","Australia"],
     high52w: "148.2",
+    notes: "Notes: Energy Transition Index= Nickel, Lithium Carbonate, Cobalt, Tin, Manganese, Chromium, Titanium &amp; Tungsten. Region: Global. Avg. Prices Jan-2021 = 100",
     low52w: "130.1",
     avg3mVal: "135.8",
     unit: "IMM-MI",
-    histPoints: "42,160 157,165 292,158 427,168 562,175 697,180 810,178",
-    fcPoints:   "810,178 930,180 1050,183 1180,181",
-    fcBand:     "810,178 930,174 1050,177 1180,175 1180,190 1050,192 930,188 810,178",
+    histPoints: "80,103.2 172,97.0 264,86.6 356,92.8 448,82.4 540,88.6 632,78.2 724,84.5 816,72.0 908,65.8 1000,61.6 1092,55.4 1184,47.0",
+    fcPoints: "",
+    fcBand: "",
     commentary: "Energy transition metals showed divergent performance in Jan-26. Lithium Carbonate fell <strong>−2.1% MoM</strong> on Chinese oversupply. Cobalt −1.8% on DRC normalization. Nickel recovered +1.6% as Indonesian supply growth moderated. Manganese remained stable on steel sector demand.",
     supply: "Chinese lithium producers continue to oversupply — capacity additions from 2023–24 investments are flooding the market. DRC cobalt supply normalising post-2024 disruptions. Indonesia's nickel HPAL projects ramping up, adding significant new supply to the global market.",
     demand: "Global lithium-ion battery demand projected at <strong>3,500 GWh by 2030</strong> (from 1,200 GWh in 2025). Grid-scale energy storage deployments growing +45% YoY. EV adoption accelerating across EU and China — structural demand floor for all battery metals despite near-term price weakness.",
@@ -2119,9 +2351,9 @@ function openIndexModal(cat) {
     const fl = document.getElementById('im-fc-line');
     const fb = document.getElementById('im-fc-band');
     if(hl) { hl.setAttribute('stroke', d.colorHex); hl.setAttribute('points', d.histPoints); }
-    if(hf) { hf.setAttribute('fill', d.colorHex); hf.setAttribute('points', d.histPoints + ' 810,240 42,240'); }
-    if(fl) { fl.setAttribute('stroke', d.colorHex); fl.setAttribute('points', d.fcPoints); }
-    if(fb) { fb.setAttribute('fill', d.colorHex); fb.setAttribute('points', d.fcBand); }
+    if(hf) { hf.setAttribute('fill', 'none'); hf.setAttribute('points', ''); }
+    if(fl) { fl.setAttribute('stroke', 'none'); fl.setAttribute('points', ''); }
+    if(fb) { fb.setAttribute('fill', 'none'); fb.setAttribute('points', ''); }
   } catch(e) {}
   // 52W stats
   try {
@@ -2131,6 +2363,12 @@ function openIndexModal(cat) {
     if(h) h.textContent = d.high52w;
     if(l) l.textContent = d.low52w;
     if(a) a.textContent = d.avg3mVal;
+    try { var nt=document.getElementById('im-notes-text'); if(nt&&d.notes) nt.innerHTML=d.notes; } catch(e2){}
+  } catch(e) {}
+  // Update chart notes dynamically
+  try {
+    const n = document.getElementById('im-chart-notes');
+    if(n && d.chartNotes) n.textContent = d.chartNotes;
   } catch(e) {}
   // Also update top stats bar (safe null checks)
   try {
@@ -2192,7 +2430,7 @@ function closeIndexModal() {
 
 function switchImTab(tab, color) {
   try {
-    ['commentary','supply','demand','feedstock','forecast','pricesummary'].forEach(t => {
+    ['commentary','supply','demand','feedstock','pricesummary'].forEach(t => {
       const btn = document.getElementById('im-tab-btn-'+t);
       if(btn) btn.classList.remove('active');
       const el = document.getElementById('im-tab-content-'+t);
@@ -2296,18 +2534,12 @@ function setImTimeRange(btn, range) {
       <!-- FULL WIDTH CHART - Ferrous Only IMM-MI Style -->
         <!-- Chart SVG -->
         <div style="position:relative;background:var(--bg3);border-radius:8px;border:1px solid var(--border);padding:10px 6px 4px;">
-          <svg id="imChart" width="100%" height="210" viewBox="0 0 1300 310" preserveAspectRatio="none" style="display:block;">
-            <defs>
-              <linearGradient id="im-hist-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.4"/>
-                <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.03"/>
-              </linearGradient>
-            </defs>
+          <svg id="imChart" width="100%" height="210" viewBox="0 0 1300 260" preserveAspectRatio="none" style="display:block;">
 
             <!-- Y-axis rotated label -->
             <text transform="rotate(-90,16,124)" x="16" y="124" fill="#9CA3AF" font-size="13" font-family="Barlow" text-anchor="middle">IMM-MI Jan 2021=100</text>
 
-            <!-- Y-axis values -->
+            <!-- Y-axis values: 100 to 200 -->
             <text x="76" y="24"  fill="#9CA3AF" font-size="13" font-family="JetBrains Mono" text-anchor="end">200.00</text>
             <text x="76" y="76"  fill="#9CA3AF" font-size="13" font-family="JetBrains Mono" text-anchor="end">175.00</text>
             <text x="76" y="128" fill="#9CA3AF" font-size="13" font-family="JetBrains Mono" text-anchor="end">150.00</text>
@@ -2325,34 +2557,30 @@ function setImTimeRange(btn, range) {
             <line x1="80" y1="8"   x2="80"   y2="230" stroke="#6B7280" stroke-width="1.2"/>
             <line x1="80" y1="228" x2="1220" y2="228" stroke="#6B7280" stroke-width="1.2"/>
 
-            <!-- Fill area — exact same points as line + closing to bottom -->
-            <polygon id="im-hist-fill"
-              points="80,103.2 172,97.0 264,86.6 356,92.8 448,82.4 540,88.6 632,78.2 724,84.5 816,72.0 908,65.8 1000,61.6 1092,55.4 1184,47.0 1184,228 80,228"
-              fill="url(#im-hist-grad)"/>
-
-            <!-- Line — exact same X,Y as fill top edge -->
+            <!-- NO forecast, NO fill — pure 2D line only -->
             <polyline id="im-hist-line"
               points="80,103.2 172,97.0 264,86.6 356,92.8 448,82.4 540,88.6 632,78.2 724,84.5 816,72.0 908,65.8 1000,61.6 1092,55.4 1184,47.0"
               fill="none" stroke="#7C3AED" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 
-            <!-- Forecast dashed -->
-            <polyline id="im-fc-line" points="1184,47.0 1220,43.0" fill="none" stroke="#7C3AED" stroke-width="2" stroke-dasharray="7,4"/>
-            <polygon  id="im-fc-band" points="1184,47.0 1220,41 1220,46 1184,47.0" fill="#7C3AED" opacity="0.1"/>
+            <!-- Hidden elements for JS compatibility -->
+            <polygon id="im-hist-fill" points="" fill="none"/>
+            <polyline id="im-fc-line"  points="" fill="none" stroke="none"/>
+            <polygon  id="im-fc-band"  points="" fill="none"/>
 
-            <!-- Dots — EXACT same coords as line points -->
-            <circle cx="80"   cy="103.2" r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="172"  cy="97.0"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="264"  cy="86.6"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="356"  cy="92.8"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="448"  cy="82.4"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="540"  cy="88.6"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="632"  cy="78.2"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="724"  cy="84.5"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="816"  cy="72.0"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="908"  cy="65.8"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="1000" cy="61.6"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="1092" cy="55.4"  r="4"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
-            <circle cx="1184" cy="47.0"  r="5"   fill="#7C3AED" stroke="var(--bg3)" stroke-width="2"/>
+            <!-- Dots — same coords as line -->
+            <circle cx="80"   cy="103.2" r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="172"  cy="97.0"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="264"  cy="86.6"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="356"  cy="92.8"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="448"  cy="82.4"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="540"  cy="88.6"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="632"  cy="78.2"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="724"  cy="84.5"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="816"  cy="72.0"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="908"  cy="65.8"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="1000" cy="61.6"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="1092" cy="55.4"  r="4" fill="#7C3AED" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="1184" cy="47.0"  r="5" fill="#7C3AED" stroke="var(--bg3)" stroke-width="2"/>
 
             <!-- X-axis labels -->
             <text x="80"   y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Jan-25</text>
@@ -2369,29 +2597,19 @@ function setImTimeRange(btn, range) {
             <text x="1092" y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Dec-25</text>
             <text x="1184" y="245" fill="#9CA3AF" font-size="12" font-family="Barlow" text-anchor="middle">Jan-26</text>
 
-            <!-- Source + Notes below x labels -->
-            <text x="80"  y="264" fill="#9CA3AF" font-size="12" font-family="Barlow" font-weight="600">Source: Procurement Resource</text>
-            <text x="80"  y="278" fill="#9CA3AF" font-size="10" font-family="Barlow">Notes: Ferrous Metal Index= HRC, CRC, Rebar, Wire Rod, and MS Pipe Avg. Prices Jan.-2021 = 100</text>
 
-            <!-- Units text — bottom right, left of Excel icon -->
-            <text x="1145" y="264" fill="#9CA3AF" font-size="12" font-family="Barlow" font-weight="600" text-anchor="end">Units: IMM-MI Jan 2021=100</text>
-
-            <!-- Excel icon — bottom right corner -->
-            <g onclick="downloadIndexExcel()" style="cursor:pointer;" transform="translate(1152,252)">
-              <rect x="0" y="0" width="32" height="32" rx="4" fill="#217346"/>
-              <text x="16" y="22" fill="white" font-size="17" font-family="Arial" font-weight="800" text-anchor="middle">X</text>
-            </g>
           </svg>
         </div>
 
-        <!-- Forecast Range -->
-        <div style="margin-top:10px;">
-          <div class="im-section-label" style="margin-bottom:6px;">FORECAST RANGE</div>
-          <div class="im-time-btns">
-            <button class="active" onclick="setImTimeRange(this,'fc3m')">3M</button>
-            <button onclick="setImTimeRange(this,'fc6m')">6M</button>
-            <button onclick="openForecastPaywall('1Y')" style="opacity:.65;">1Y 🔒</button>
-            <button onclick="openForecastPaywall('2Y')" style="opacity:.65;">2Y 🔒</button>
+        <!-- Source, Notes, Units, Excel — BELOW chart, outside border -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:8px;padding:0 2px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--dim);font-family:var(--font-body);">Source: Procurement Resource</div>
+            <div id="im-chart-notes" style="font-size:10px;color:var(--dim);margin-top:2px;font-family:var(--font-body);">Notes: Ferrous Metal Index= HRC, CRC, Rebar, Merchant Bar, &amp; Beams. Region: Global. Avg. Prices Jan-2021 = 100</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <div style="font-size:11px;font-weight:700;color:var(--dim);font-family:var(--font-body);">Units: IMM-MI Jan 2021=100</div>
+            <div onclick="downloadIndexExcel()" style="cursor:pointer;background:#217346;width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:15px;font-family:Arial;">X</div>
           </div>
         </div>
 
@@ -2404,7 +2622,7 @@ function setImTimeRange(btn, range) {
       <button id="im-tab-btn-supply"       class="im-tab"        onclick="switchImTab('supply')">🏭 Supply</button>
       <button id="im-tab-btn-demand"       class="im-tab"        onclick="switchImTab('demand')">📈 Demand</button>
       <button id="im-tab-btn-feedstock"    class="im-tab"        onclick="switchImTab('feedstock')">⛏ Feedstock</button>
-      <button id="im-tab-btn-forecast"     class="im-tab"        onclick="switchImTab('forecast')">◇ Forecast Range</button>
+      
       <button id="im-tab-btn-pricesummary" class="im-tab"        onclick="switchImTab('pricesummary')">$ Price Summary</button>
     </div>
 
@@ -2422,20 +2640,7 @@ function setImTimeRange(btn, range) {
       <div id="im-tab-content-feedstock" style="display:none;">
         <div id="im-tab-feedstock" class="im-tab-text"></div>
       </div>
-      <div id="im-tab-content-forecast" style="display:none;">
-        <table style="width:100%;border-collapse:collapse;">
-          <thead>
-            <tr>
-              <th style="text-align:left;padding:8px 0;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;border-bottom:1px solid var(--border);">Period</th>
-              <th style="text-align:center;padding:8px;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--down);text-transform:uppercase;border-bottom:1px solid var(--border);">Low</th>
-              <th style="text-align:center;padding:8px;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;border-bottom:1px solid var(--border);">Mid (Base)</th>
-              <th style="text-align:center;padding:8px;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--up);text-transform:uppercase;border-bottom:1px solid var(--border);">High</th>
-              <th style="text-align:right;padding:8px 0;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;border-bottom:1px solid var(--border);">Confidence</th>
-            </tr>
-          </thead>
-          <tbody id="im-fc-table"></tbody>
-        </table>
-      </div>
+
       <div id="im-tab-content-pricesummary" style="display:none;">
         <div id="im-price-summary"></div>
       </div>
