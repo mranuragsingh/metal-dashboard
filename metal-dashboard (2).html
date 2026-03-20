@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metal Market Intelligence Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #060D1F;
+  --bg2:      #0A1628;
+  --bg3:      #0F2040;
+  --bg4:      #162B52;
+  --border:   #1E3460;
+  --gold:     #C8A45A;
+  --gold2:    #E5C97A;
+  --silver:   #B8C4D4;
+  --dim:      #4A5A7A;
+  --white:    #F0F4FF;
+  --up:       #00D4A0;
+  --down:     #FF4D6A;
+  --flat:     #F0A045;
+  --fer:      #4E9FFF;
+  --nfe:      #00C896;
+  --pre:      #FFB830;
+  --ene:      #FF6B35;
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body:    'Barlow', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --sidebar-w: 220px;
+  --header-h:  56px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ──────────────────────────────── */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius:3px; }
+
+/* ── HEADER ─────────────────────────────────── */
+.header {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  height: var(--header-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 20px 0 0;
+  gap: 0;
+}
+.header-brand {
+  width: var(--sidebar-w);
+  padding: 0 20px;
+  display: flex; align-items: center; gap:10px;
+  border-right: 1px solid var(--border);
+  height: 100%;
+  flex-shrink: 0;
+}
+.brand-icon {
+  width:32px; height:32px; background: var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-display);
+  font-weight:800; font-size:16px; color: var(--bg);
+  clip-path: polygon(0 0, 85% 0, 100% 15%, 100% 100%, 15% 100%, 0 85%);
+}
+.brand-text { line-height:1.1; }
+.brand-text .t1 { font-family:var(--font-display); font-size:13px; font-weight:700; color:var(--white); letter-spacing:1px; }
+.brand-text .t2 { font-size:9px; color:var(--gold); letter-spacing:2px; text-transform:uppercase; }
+
+.header-search {
+  flex:1; max-width:340px; margin:0 20px;
+  background: var(--bg3); border:1px solid var(--border);
+  border-radius:6px; display:flex; align-items:center;
+  padding:0 12px; gap:8px;
+}
+.header-search input {
+  background:none; border:none; outline:none;
+  color:var(--white); font-family:var(--font-body);
+  font-size:13px; width:100%; padding:8px 0;
+}
+.header-search input::placeholder { color:var(--dim); }
+.search-icon { color:var(--dim); font-size:13px; }
+
+.header-right { margin-left:auto; display:flex; align-items:center; gap:6px; }
+
+.hbtn {
+  background: none; border:none; cursor:pointer;
+  padding:8px 10px; border-radius:6px;
+  color:var(--silver); font-size:13px;
+  display:flex; align-items:center; gap:6px;
+  transition: all .15s; position:relative;
+  font-family:var(--font-body);
+}
+.hbtn:hover { background:var(--bg3); color:var(--white); }
+.hbtn .badge {
+  position:absolute; top:4px; right:4px;
+  width:16px; height:16px; background:var(--down);
+  border-radius:50%; font-size:9px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff;
+}
+.live-dot {
+  width:7px; height:7px; background:var(--up);
+  border-radius:50%; animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+
+.user-chip {
+  display:flex; align-items:center; gap:8px;
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:6px; padding:5px 12px 5px 6px; cursor:pointer;
+}
+.user-avatar {
+  width:28px; height:28px; background:var(--gold);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:700; font-size:12px; color:var(--bg);
+}
+.user-name { font-size:12px; font-weight:500; }
+
+/* ── SIDEBAR ─────────────────────────────────── */
+.sidebar {
+  position:fixed; top:var(--header-h); left:0; bottom:0;
+  width:var(--sidebar-w); background:var(--bg2);
+  border-right:1px solid var(--border);
+  overflow-y:auto; z-index:50;
+  display:flex; flex-direction:column;
+}
+.nav-group { padding:20px 12px 4px; }
+.nav-label {
+  font-size:9px; font-weight:600; letter-spacing:2px;
+  color:var(--dim); text-transform:uppercase;
+  padding:0 8px; margin-bottom:6px;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px; border-radius:6px; cursor:pointer;
+  color:var(--silver); font-size:13px; font-weight:500;
+  transition:all .15s; margin-bottom:2px;
+  text-decoration:none; position:relative;
+}
+.nav-item:hover { background:var(--bg3); color:var(--white); }
+.nav-item.active {
+  background: linear-gradient(90deg, var(--bg4), transparent);
+  color:var(--white);
+  border-left:2px solid var(--gold);
+}
+.nav-item .nav-icon { font-size:15px; width:18px; text-align:center; }
+.nav-badge {
+  margin-left:auto; background:var(--down);
+  color:#fff; font-size:9px; font-weight:700;
+  padding:1px 6px; border-radius:10px;
+}
+.nav-badge.live {
+  background:none; color:var(--up); border:1px solid var(--up);
+  display:flex; align-items:center; gap:4px;
+}
+
+.sidebar-metals {
+  padding:12px; margin-top:auto;
+  border-top:1px solid var(--border);
+}
+.sidebar-metals-title {
+  font-size:9px; color:var(--dim); letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:8px; padding:0 4px;
+}
+.metal-quick-links {
+  display:flex; flex-wrap:wrap; gap:4px;
+}
+.metal-tag {
+  font-size:10px; padding:3px 8px; border-radius:4px;
+  background:var(--bg3); color:var(--silver); cursor:pointer;
+  border:1px solid var(--border); transition:all .15s;
+  font-family:var(--font-mono);
+}
+.metal-tag:hover { border-color:var(--gold); color:var(--gold); }
+
+/* ── MAIN ────────────────────────────────────── */
+.main {
+  margin-left:var(--sidebar-w);
+  margin-top:var(--header-h);
+  min-height:calc(100vh - var(--header-h));
+}
+.page { display:none; padding:24px; }
+.page.active { display:block; }
+
+/* ── PAGE HEADER ─────────────────────────────── */
+.page-header { margin-bottom:24px; display:flex; align-items:flex-start; justify-content:space-between; }
+.page-title { font-family:var(--font-display); font-size:28px; font-weight:700; letter-spacing:1px; line-height:1; }
+.page-sub { font-size:13px; color:var(--silver); margin-top:4px; }
+.page-actions { display:flex; gap:8px; }
+
+.btn {
+  padding:8px 16px; border-radius:6px; font-size:13px;
+  font-family:var(--font-body); font-weight:500;
+  cursor:pointer; transition:all .15s; border:none;
+  display:flex; align-items:center; gap:6px;
+}
+.btn-ghost { background:var(--bg3); color:var(--silver); border:1px solid var(--border); }
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+.btn-gold { background:var(--gold); color:var(--bg); font-weight:600; }
+.btn-gold:hover { background:var(--gold2); }
+
+/* ── GRID ────────────────────────────────────── */
+.grid { display:grid; gap:16px; }
+.grid-4 { grid-template-columns:repeat(4,1fr); }
+.grid-3 { grid-template-columns:repeat(3,1fr); }
+.grid-2 { grid-template-columns:repeat(2,1fr); }
+.grid-main { grid-template-columns:1fr 340px; }
+.grid-main2 { grid-template-columns:2fr 1fr; }
+
+/* ── CARD ────────────────────────────────────── */
+.card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; overflow:hidden;
+}
+.card-header {
+  padding:14px 18px 10px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.card-title {
+  font-family:var(--font-display); font-size:14px;
+  font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--silver);
+}
+.card-body { padding:16px 18px; }
+
+/* ── KPI CARDS ───────────────────────────────── */
+.kpi-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; padding:16px 18px;
+  position:relative; overflow:hidden; cursor:pointer;
+  transition:all .2s;
+}
+.kpi-card:hover { border-color:var(--gold); transform:translateY(-2px); }
+.kpi-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+}
+.kpi-fer::before { background:var(--fer); }
+.kpi-nfe::before { background:var(--nfe); }
+.kpi-pre::before { background:var(--pre); }
+.kpi-ene::before { background:var(--ene); }
+
+.kpi-label {
+  font-size:9px; font-weight:700; letter-spacing:2px;
+  color:var(--dim); text-transform:uppercase; margin-bottom:8px;
+}
+.kpi-val {
+  font-family:var(--font-display); font-size:36px;
+  font-weight:800; line-height:1; margin-bottom:4px;
+}
+.kpi-sub { font-size:11px; color:var(--dim); margin-bottom:10px; }
+.kpi-change {
+  display:inline-flex; align-items:center; gap:4px;
+  font-family:var(--font-mono); font-size:12px; font-weight:500;
+  padding:3px 8px; border-radius:4px;
+}
+.up   { color:var(--up);   background:rgba(0,212,160,.1); }
+.down { color:var(--down); background:rgba(255,77,106,.1); }
+.flat { color:var(--flat); background:rgba(240,160,69,.1); }
+.kpi-sparkline { margin-top:12px; height:36px; }
+
+/* ── METAL ROW ───────────────────────────────── */
+.metal-row {
+  display:grid; grid-template-columns:28px 1fr 90px 80px 80px 90px;
+  align-items:center; gap:12px;
+  padding:10px 0; border-bottom:1px solid var(--border);
+  cursor:pointer; transition:background .15s;
+}
+.metal-row:last-child { border:none; }
+.metal-row:hover { background:var(--bg3); margin:0 -18px; padding:10px 18px; border-radius:6px; }
+.metal-dot { width:8px; height:8px; border-radius:50%; }
+.metal-name { font-weight:600; font-size:13px; }
+.metal-cat  { font-size:10px; color:var(--dim); margin-top:1px; }
+.metal-price { font-family:var(--font-mono); font-size:13px; text-align:right; }
+.metal-mom   { font-family:var(--font-mono); font-size:12px; font-weight:600; text-align:right; }
+.metal-region { font-size:11px; color:var(--dim); text-align:right; }
+
+/* ── TABS ────────────────────────────────────── */
+.tabs { display:flex; gap:2px; background:var(--bg3); border-radius:8px; padding:3px; }
+.tab {
+  padding:6px 14px; border-radius:6px; font-size:12px;
+  font-weight:600; cursor:pointer; color:var(--dim);
+  transition:all .15s; border:none; background:none;
+  font-family:var(--font-body); letter-spacing:.5px;
+}
+.tab.active { background:var(--bg2); color:var(--white); }
+.tab:hover:not(.active) { color:var(--silver); }
+
+/* ── CHART PLACEHOLDER ───────────────────────── */
+.chart-wrap { position:relative; width:100%; }
+.chart-svg { width:100%; }
+
+/* ── NEWS ────────────────────────────────────── */
+.news-item {
+  padding:14px 0; border-bottom:1px solid var(--border);
+  cursor:pointer; transition:all .15s;
+}
+.news-item:last-child { border:none; }
+.news-item:hover .news-title { color:var(--gold); }
+.news-tag {
+  display:inline-block; font-size:9px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase;
+  padding:2px 8px; border-radius:3px; margin-bottom:6px;
+}
+.tag-fer   { background:rgba(78,159,255,.15); color:var(--fer); }
+.tag-nfe   { background:rgba(0,200,150,.15);  color:var(--nfe); }
+.tag-pre   { background:rgba(255,184,48,.15); color:var(--pre); }
+.tag-ene   { background:rgba(255,107,53,.15); color:var(--ene); }
+.tag-global{ background:rgba(200,164,90,.15); color:var(--gold); }
+.news-title { font-size:13px; font-weight:600; line-height:1.4; margin-bottom:4px; transition:color .15s; }
+.news-meta  { font-size:11px; color:var(--dim); }
+
+/* ── DISRUPTION ──────────────────────────────── */
+.disruption-item {
+  padding:12px 14px; border-radius:8px;
+  background:var(--bg3); margin-bottom:8px;
+  border-left:3px solid; cursor:pointer;
+  transition:all .15s;
+}
+.disruption-item:hover { background:var(--bg4); }
+.disruption-item.high   { border-color:var(--down); }
+.disruption-item.medium { border-color:var(--flat); }
+.disruption-item.low    { border-color:var(--up); }
+.dis-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+.dis-name { font-size:13px; font-weight:600; }
+.dis-sev {
+  font-size:9px; font-weight:700; letter-spacing:1.5px;
+  padding:2px 7px; border-radius:3px;
+}
+.sev-high   { background:rgba(255,77,106,.15); color:var(--down); }
+.sev-medium { background:rgba(240,160,69,.15);  color:var(--flat); }
+.sev-low    { background:rgba(0,212,160,.15);  color:var(--up); }
+.dis-meta { font-size:11px; color:var(--dim); }
+
+/* ── FORECAST TABLE ──────────────────────────── */
+.fc-table { width:100%; border-collapse:collapse; }
+.fc-table th {
+  text-align:left; padding:8px 12px;
+  font-size:9px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim);
+  border-bottom:1px solid var(--border);
+}
+.fc-table td {
+  padding:11px 12px; border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.fc-table tr:last-child td { border:none; }
+.fc-table tr:hover td { background:var(--bg3); }
+.fc-name { font-weight:600; }
+.fc-price { font-family:var(--font-mono); }
+.fc-trend { font-family:var(--font-mono); font-weight:600; font-size:12px; }
+
+/* ── ALERT ───────────────────────────────────── */
+.alert-row {
+  display:grid; grid-template-columns:1fr 160px 130px 110px 70px;
+  align-items:center; gap:12px;
+  padding:12px 0; border-bottom:1px solid var(--border);
+}
+.alert-row:last-child { border:none; }
+.alert-name { font-weight:600; font-size:13px; }
+.alert-cond { font-size:11px; color:var(--dim); margin-top:2px; }
+.alert-status {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:11px; font-weight:600; padding:3px 10px;
+  border-radius:4px;
+}
+.status-triggered { background:rgba(255,77,106,.1); color:var(--down); }
+.status-watching  { background:rgba(240,160,69,.1);  color:var(--flat); }
+
+/* ── STAT BOXES ──────────────────────────────── */
+.stat-box {
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:8px; padding:16px;
+  text-align:center;
+}
+.stat-num { font-family:var(--font-display); font-size:40px; font-weight:800; line-height:1; }
+.stat-lbl { font-size:11px; color:var(--dim); margin-top:4px; letter-spacing:1px; text-transform:uppercase; }
+
+/* ── PRODUCT CATALOG ─────────────────────────── */
+.cat-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.cat-tab {
+  padding:7px 18px; border-radius:20px; font-size:12px;
+  font-weight:600; cursor:pointer; border:1px solid var(--border);
+  background:var(--bg3); color:var(--dim); transition:all .15s;
+}
+.cat-tab:hover { border-color:var(--silver); color:var(--silver); }
+.cat-tab.active { color:var(--bg); font-weight:700; border-color:transparent; }
+.cat-tab.fer-tab.active  { background:var(--fer); }
+.cat-tab.nfe-tab.active  { background:var(--nfe); }
+.cat-tab.pre-tab.active  { background:var(--pre); color:var(--bg); }
+.cat-tab.ene-tab.active  { background:var(--ene); }
+.cat-tab.all-tab.active  { background:var(--gold); }
+
+.product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.product-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; padding:16px; cursor:pointer;
+  transition:all .2s; position:relative; overflow:hidden;
+}
+.product-card:hover { border-color:var(--gold); transform:translateY(-2px); }
+.product-card::after {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+}
+.pc-fer::after { background:var(--fer); }
+.pc-nfe::after { background:var(--nfe); }
+.pc-pre::after { background:var(--pre); }
+.pc-ene::after { background:var(--ene); }
+.pc-name { font-weight:700; font-size:14px; margin-bottom:2px; }
+.pc-region { font-size:11px; color:var(--dim); margin-bottom:12px; }
+.pc-price { font-family:var(--font-display); font-size:26px; font-weight:800; }
+.pc-unit  { font-size:10px; color:var(--dim); margin-bottom:8px; }
+.pc-change { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; font-family:var(--font-mono); padding:3px 8px; border-radius:4px; }
+
+/* ── ANALYTICS ───────────────────────────────── */
+.analytics-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; padding:20px; cursor:pointer;
+  transition:all .2s; display:flex; flex-direction:column; gap:10px;
+}
+.analytics-card:hover { border-color:var(--gold); transform:translateY(-2px); }
+.ac-icon { font-size:28px; margin-bottom:4px; }
+.ac-title { font-family:var(--font-display); font-size:18px; font-weight:700; }
+.ac-desc  { font-size:12px; color:var(--silver); line-height:1.5; }
+.ac-tags  { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+.ac-tag   { font-size:10px; padding:2px 8px; border-radius:3px; background:var(--bg3); color:var(--dim); border:1px solid var(--border); }
+
+/* ── ASK PR ──────────────────────────────────── */
+.ask-container {
+  max-width:780px; margin:0 auto;
+}
+.ask-messages {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; min-height:420px; max-height:520px;
+  overflow-y:auto; padding:20px; display:flex;
+  flex-direction:column; gap:16px; margin-bottom:16px;
+}
+.msg { display:flex; gap:12px; }
+.msg-avatar {
+  width:32px; height:32px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:12px;
+}
+.msg-pr .msg-avatar { background:var(--gold); color:var(--bg); }
+.msg-user .msg-avatar { background:var(--bg4); color:var(--silver); }
+.msg-content { flex:1; }
+.msg-name { font-size:11px; font-weight:700; margin-bottom:4px; color:var(--dim); letter-spacing:1px; text-transform:uppercase; }
+.msg-text { font-size:13px; line-height:1.6; color:var(--white); }
+.msg-text strong { color:var(--gold); }
+.ask-input-area { display:flex; gap:10px; }
+.ask-input {
+  flex:1; background:var(--bg2); border:1px solid var(--border);
+  border-radius:8px; padding:12px 16px; color:var(--white);
+  font-family:var(--font-body); font-size:13px; outline:none;
+  transition:border .15s;
+}
+.ask-input:focus { border-color:var(--gold); }
+.ask-suggestions { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.ask-sug {
+  font-size:11px; padding:5px 12px; border-radius:4px;
+  background:var(--bg3); border:1px solid var(--border);
+  color:var(--silver); cursor:pointer; transition:all .15s;
+}
+.ask-sug:hover { border-color:var(--gold); color:var(--gold); }
+
+/* ── NOTIFY DROPDOWN ─────────────────────────── */
+.notify-dropdown {
+  position:absolute; top:calc(var(--header-h) + 4px); right:160px;
+  width:340px; background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; z-index:200; display:none; overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.notify-dropdown.open { display:block; }
+.notify-header-row {
+  padding:14px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.notify-header-row .title { font-weight:700; font-size:14px; }
+.notify-item {
+  padding:12px 16px; border-bottom:1px solid var(--border);
+  cursor:pointer; transition:background .15s;
+}
+.notify-item:last-child { border:none; }
+.notify-item:hover { background:var(--bg3); }
+.notify-item-title { font-size:12px; font-weight:500; margin-bottom:2px; }
+.notify-item-title strong { color:var(--gold); }
+.notify-item-time { font-size:10px; color:var(--dim); }
+
+/* ── HEATMAP ─────────────────────────────────── */
+.heatmap-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+.hm-cell {
+  border-radius:6px; padding:10px 8px; text-align:center; cursor:pointer;
+  transition:all .15s;
+}
+.hm-cell:hover { transform:scale(1.05); }
+.hm-name { font-size:11px; font-weight:600; margin-bottom:3px; }
+.hm-val  { font-family:var(--font-mono); font-size:10px; font-weight:500; }
+
+/* ── CHART SVG ───────────────────────────────── */
+.mini-chart { height:50px; width:100%; }
+
+/* ── ANIMATIONS ──────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.page.active .card,
+.page.active .kpi-card,
+.page.active .product-card,
+.page.active .analytics-card {
+  animation: fadeUp .3s ease both;
+}
+.page.active .kpi-card:nth-child(1) { animation-delay:.05s; }
+.page.active .kpi-card:nth-child(2) { animation-delay:.1s;  }
+.page.active .kpi-card:nth-child(3) { animation-delay:.15s; }
+.page.active .kpi-card:nth-child(4) { animation-delay:.2s;  }
+
+/* ── TICKER ──────────────────────────────────── */
+.ticker-bar {
+  background:var(--bg3); border-bottom:1px solid var(--border);
+  padding:0 24px; overflow:hidden; height:32px;
+  display:flex; align-items:center;
+}
+.ticker-inner {
+  display:flex; gap:32px; animation:ticker 40s linear infinite;
+  white-space:nowrap;
+}
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.ticker-item {
+  display:flex; align-items:center; gap:8px;
+  font-size:11px; font-family:var(--font-mono);
+}
+.ticker-name { color:var(--silver); font-weight:500; }
+.ticker-price { color:var(--white); }
+
+/* ── SECTION LABEL ───────────────────────────── */
+.section-label {
+  font-size:9px; font-weight:700; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--gold);
+  display:flex; align-items:center; gap:8px; margin-bottom:14px;
+}
+.section-label::after {
+  content:''; flex:1; height:1px; background:var(--border);
+}
+
+/* ── REGION FILTER ───────────────────────────── */
+.region-pill {
+  padding:4px 12px; border-radius:12px; font-size:11px;
+  font-weight:600; cursor:pointer; border:1px solid var(--border);
+  background:none; color:var(--dim); transition:all .15s;
+}
+.region-pill.active { background:var(--bg4); color:var(--white); border-color:var(--gold); }
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media(max-width:1200px) {
+  .grid-4 { grid-template-columns:repeat(2,1fr); }
+  .product-grid { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="brand-icon">M</div>
+    <div class="brand-text">
+      <div class="t1">METAL MARKET</div>
+      <div class="t2">Intelligence Dashboard</div>
+    </div>
+  </div>
+  <div class="header-search">
+    <span class="search-icon">⌕</span>
+    <input type="text" placeholder="Search metals, regions, news...">
+    <span style="font-size:10px;color:var(--dim);border:1px solid var(--border);padding:2px 6px;border-radius:3px;white-space:nowrap">Ctrl+K</span>
+  </div>
+  <div class="header-right">
+    <div style="display:flex;align-items:center;gap:4px;padding:5px 10px;background:rgba(0,212,160,.08);border:1px solid rgba(0,212,160,.2);border-radius:6px;">
+      <div class="live-dot"></div>
+      <span style="font-size:11px;color:var(--up);font-weight:600;letter-spacing:.5px">LIVE</span>
+    </div>
+    <button class="hbtn" onclick="toggleNotify()">
+      🔔
+      <span class="badge">5</span>
+    </button>
+    <div class="user-chip">
+      <div class="user-avatar">JD</div>
+      <span class="user-name">John Doe</span>
+    </div>
+  </div>
+</header>
+
+<!-- NOTIFICATION DROPDOWN -->
+<div class="notify-dropdown" id="notifyDrop">
+  <div class="notify-header-row">
+    <span class="title">Notifications</span>
+    <span style="font-size:11px;color:var(--gold);cursor:pointer">Mark all read</span>
+  </div>
+  <div class="notify-item">
+    <div class="notify-item-title"><strong>Gold</strong> exceeded $2,500 threshold</div>
+    <div class="notify-item-time">10 min ago</div>
+  </div>
+  <div class="notify-item">
+    <div class="notify-item-title"><strong>JSW Steel Vijayanagar</strong> — Unplanned blast furnace shutdown</div>
+    <div class="notify-item-time">1h ago</div>
+  </div>
+  <div class="notify-item">
+    <div class="notify-item-title"><strong>Lithium Carbonate</strong> fell below $14,000 threshold</div>
+    <div class="notify-item-time">2h ago</div>
+  </div>
+  <div class="notify-item">
+    <div class="notify-item-title">New report: <strong>Weekly Steel Market Update</strong></div>
+    <div class="notify-item-time">3h ago</div>
+  </div>
+  <div class="notify-item">
+    <div class="notify-item-title"><strong>Copper</strong> LME inventories hit 3-year low</div>
+    <div class="notify-item-time">5h ago</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="nav-group">
+    <div class="nav-label">Main</div>
+    <a class="nav-item active" onclick="showPage('home')">
+      <span class="nav-icon">⬛</span> Home Dashboard
+    </a>
+    <a class="nav-item" onclick="showPage('catalog')">
+      <span class="nav-icon">◈</span> Metal Catalog
+    </a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Analytics & Data</div>
+    <a class="nav-item" onclick="showPage('analytics')">
+      <span class="nav-icon">◎</span> Analytics
+    </a>
+    <a class="nav-item" onclick="showPage('forecast')">
+      <span class="nav-icon">◇</span> Forecasting Report
+    </a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Market Intelligence</div>
+    <a class="nav-item" onclick="showPage('news')">
+      <span class="nav-icon">▤</span> PR News
+      <span class="nav-badge">8</span>
+    </a>
+    <a class="nav-item" onclick="showPage('disruptions')">
+      <span class="nav-icon">⚡</span> Live Disruptions
+      <span class="nav-badge live"><span class="live-dot"></span> LIVE</span>
+    </a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Tools</div>
+    <a class="nav-item" onclick="showPage('alerts')">
+      <span class="nav-icon">🔔</span> Alerts Manager
+    </a>
+    <a class="nav-item" onclick="showPage('askpr')">
+      <span class="nav-icon">✦</span> Ask PR  <span style="font-size:9px;padding:1px 5px;background:rgba(200,164,90,.15);color:var(--gold);border-radius:3px;margin-left:2px">AI</span>
+    </a>
+  </div>
+
+  <div class="sidebar-metals">
+    <div class="sidebar-metals-title">Quick Access</div>
+    <div class="metal-quick-links">
+      <span class="metal-tag">Gold</span>
+      <span class="metal-tag">HRC</span>
+      <span class="metal-tag">Copper</span>
+      <span class="metal-tag">Rebar</span>
+      <span class="metal-tag">Lithium</span>
+      <span class="metal-tag">Nickel</span>
+      <span class="metal-tag">Silver</span>
+      <span class="metal-tag">Cobalt</span>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- ══ HOME DASHBOARD ══════════════════════════ -->
+<div class="page active" id="page-home">
+  <!-- Ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-inner" id="tickerContent"></div>
+  </div>
+
+  <div style="padding:24px">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Good morning, John</div>
+        <div class="page-sub">Metal market overview · <span id="todayDate"></span></div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-ghost">⤓ Export Report</button>
+        <button class="btn btn-gold">✦ Ask PR AI</button>
+      </div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="grid grid-4" style="margin-bottom:20px">
+      <div class="kpi-card kpi-fer" onclick="openIndexModal('fer')" style="cursor:pointer">
+        <div class="kpi-label">Ferrous Index</div>
+        <div class="kpi-val" style="color:var(--fer)">187.4</div>
+        <div class="kpi-sub">IMM-MI · Jan 2020 = 100</div>
+        <span class="kpi-change up">▲ +2.3% MoM</span>
+        <div class="kpi-sparkline">
+          <svg class="mini-chart" viewBox="0 0 160 40" preserveAspectRatio="none">
+            <polyline points="0,32 13,30 26,26 39,28 52,24 65,26 78,22 91,24 104,20 117,18 130,16 143,14 156,10" fill="none" stroke="var(--fer)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,32 13,30 26,26 39,28 52,24 65,26 78,22 91,24 104,20 117,18 130,16 143,14 156,10 156,40 0,40" fill="url(#ferGrad)" opacity=".15"/>
+            <defs><linearGradient id="ferGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--fer)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--dim);display:flex;align-items:center;gap:4px">Click to view full analysis <span style="font-size:12px">→</span></div>
+      </div>
+      <div class="kpi-card kpi-nfe" onclick="openIndexModal('nfe')" style="cursor:pointer">
+        <div class="kpi-label">Non-Ferrous Index</div>
+        <div class="kpi-val" style="color:var(--nfe)">162.8</div>
+        <div class="kpi-sub">IMM-MI · Jan 2020 = 100</div>
+        <span class="kpi-change up">▲ +1.1% MoM</span>
+        <div class="kpi-sparkline">
+          <svg class="mini-chart" viewBox="0 0 160 40" preserveAspectRatio="none">
+            <polyline points="0,28 13,26 26,24 39,26 52,22 65,24 78,22 91,24 104,20 117,22 130,18 143,20 156,16" fill="none" stroke="var(--nfe)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,28 13,26 26,24 39,26 52,22 65,24 78,22 91,24 104,20 117,22 130,18 143,20 156,16 156,40 0,40" fill="url(#nfeGrad)" opacity=".15"/>
+            <defs><linearGradient id="nfeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--nfe)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--dim);display:flex;align-items:center;gap:4px">Click to view full analysis <span style="font-size:12px">→</span></div>
+      </div>
+      <div class="kpi-card kpi-pre" onclick="openIndexModal('pre')" style="cursor:pointer">
+        <div class="kpi-label">Precious Index</div>
+        <div class="kpi-val" style="color:var(--pre)">241.3</div>
+        <div class="kpi-sub">IMM-MI · Jan 2020 = 100</div>
+        <span class="kpi-change up">▲ +3.8% MoM</span>
+        <div class="kpi-sparkline">
+          <svg class="mini-chart" viewBox="0 0 160 40" preserveAspectRatio="none">
+            <polyline points="0,34 13,30 26,28 39,24 52,22 65,20 78,18 91,16 104,14 117,16 130,12 143,10 156,8" fill="none" stroke="var(--pre)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,34 13,30 26,28 39,24 52,22 65,20 78,18 91,16 104,14 117,16 130,12 143,10 156,8 156,40 0,40" fill="url(#preGrad)" opacity=".15"/>
+            <defs><linearGradient id="preGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--pre)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--dim);display:flex;align-items:center;gap:4px">Click to view full analysis <span style="font-size:12px">→</span></div>
+      </div>
+      <div class="kpi-card kpi-ene" onclick="openIndexModal('ene')" style="cursor:pointer">
+        <div class="kpi-label">Energy Transition Index</div>
+        <div class="kpi-val" style="color:var(--ene)">134.6</div>
+        <div class="kpi-sub">IMM-MI · Jan 2020 = 100</div>
+        <span class="kpi-change down">▼ −0.4% MoM</span>
+        <div class="kpi-sparkline">
+          <svg class="mini-chart" viewBox="0 0 160 40" preserveAspectRatio="none">
+            <polyline points="0,18 13,20 26,16 39,20 52,24 65,26 78,24 91,26 104,28 117,30 130,28 143,30 156,30" fill="none" stroke="var(--ene)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,18 13,20 26,16 39,20 52,24 65,26 78,24 91,26 104,28 117,30 130,28 143,30 156,30 156,40 0,40" fill="url(#eneGrad)" opacity=".15"/>
+            <defs><linearGradient id="eneGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--ene)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--dim);display:flex;align-items:center;gap:4px">Click to view full analysis <span style="font-size:12px">→</span></div>
+      </div>
+    </div>
+
+    <!-- Main content grid -->
+    <div class="grid grid-main" style="margin-bottom:20px">
+      <!-- Price movements heatmap + table -->
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header">
+            <span class="card-title">Price Movement Heatmap</span>
+            <div style="display:flex;gap:6px">
+              <button class="tab active" onclick="setTab(this,'hm')">Daily</button>
+              <button class="tab" onclick="setTab(this,'hm')">Weekly</button>
+              <button class="tab" onclick="setTab(this,'hm')">Monthly</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="heatmap-grid" id="heatmapGrid"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Subscribed Metals</span>
+            <div style="display:flex;gap:6px">
+              <button class="region-pill active">All</button>
+              <button class="region-pill">Asia</button>
+              <button class="region-pill">N. America</button>
+              <button class="region-pill">Europe</button>
+            </div>
+          </div>
+          <div class="card-body" style="padding-top:4px">
+            <div style="display:grid;grid-template-columns:28px 1fr 90px 80px 80px;gap:12px;padding:6px 0 10px;border-bottom:1px solid var(--border)">
+              <span></span>
+              <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-transform:uppercase">Metal</span>
+              <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-align:right;text-transform:uppercase">Price</span>
+              <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-align:right;text-transform:uppercase">MoM</span>
+              <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-align:right;text-transform:uppercase">Region</span>
+            </div>
+            <div id="metalRows"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <!-- Disruptions -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Live Disruptions</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="live-dot"></div>
+              <span style="font-size:11px;color:var(--up);font-weight:600">LIVE</span>
+            </div>
+          </div>
+          <div class="card-body" style="padding-top:8px">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+              <div class="stat-box">
+                <div class="stat-num" style="color:var(--down)">14</div>
+                <div class="stat-lbl">Active</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num" style="color:var(--flat)">5</div>
+                <div class="stat-lbl">Unplanned</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num" style="color:var(--up)">9</div>
+                <div class="stat-lbl">Planned</div>
+              </div>
+            </div>
+            <div class="disruption-item high">
+              <div class="dis-header">
+                <span class="dis-name">JSW Steel Vijayanagar</span>
+                <span class="dis-sev sev-high">HIGH</span>
+              </div>
+              <div class="dis-meta">India · Blast Furnace · Unplanned · 1h ago</div>
+            </div>
+            <div class="disruption-item medium">
+              <div class="dis-header">
+                <span class="dis-name">Glencore Mopani Copper</span>
+                <span class="dis-sev sev-medium">MEDIUM</span>
+              </div>
+              <div class="dis-meta">Zambia · Smelter · Planned · 3h ago</div>
+            </div>
+            <div class="disruption-item high">
+              <div class="dis-header">
+                <span class="dis-name">Albemarle Silver Peak</span>
+                <span class="dis-sev sev-high">HIGH</span>
+              </div>
+              <div class="dis-meta">USA · Lithium Mine · Unplanned · 5h ago</div>
+            </div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:10px;justify-content:center" onclick="showPage('disruptions')">View all disruptions →</button>
+          </div>
+        </div>
+
+        <!-- Active Alerts -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Active Alerts</span>
+            <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px" onclick="showPage('alerts')">Manage</button>
+          </div>
+          <div class="card-body" style="padding-top:8px">
+            <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:600;font-size:13px">Gold &gt; $2,490</div>
+                <div style="font-size:11px;color:var(--dim)">Triggered 10 min ago</div>
+              </div>
+              <span class="alert-status status-triggered">● Triggered</span>
+            </div>
+            <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:600;font-size:13px">Lithium &lt; $14,000</div>
+                <div style="font-size:11px;color:var(--dim)">Triggered 2h ago</div>
+              </div>
+              <span class="alert-status status-triggered">● Triggered</span>
+            </div>
+            <div style="padding:10px 0;display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:600;font-size:13px">Copper &lt; $9,000</div>
+                <div style="font-size:11px;color:var(--dim)">Watching</div>
+              </div>
+              <span class="alert-status status-watching">◌ Watching</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- News + Forecast Row -->
+    <div class="grid grid-main2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Latest Metal News</span>
+          <div style="display:flex;gap:4px">
+            <button class="tab active" onclick="setTab(this,'news-home')">All</button>
+            <button class="tab" onclick="setTab(this,'news-home')">Ferrous</button>
+            <button class="tab" onclick="setTab(this,'news-home')">Non-Ferrous</button>
+            <button class="tab" onclick="setTab(this,'news-home')">Precious</button>
+          </div>
+        </div>
+        <div class="card-body" style="padding-top:4px">
+          <div class="news-item">
+            <span class="news-tag tag-fer">Ferrous</span>
+            <div class="news-title">Indian structural steel prices rise 2.3% MoM as JSW Steel targets 50% capacity expansion</div>
+            <div class="news-meta">25 min ago · PR Editorial</div>
+          </div>
+          <div class="news-item">
+            <span class="news-tag tag-pre">Precious</span>
+            <div class="news-title">Gold surpasses $2,490/oz as central bank buying hits 55-year record — safe-haven flows intensify</div>
+            <div class="news-meta">1h ago · PR Editorial</div>
+          </div>
+          <div class="news-item">
+            <span class="news-tag tag-nfe">Non-Ferrous</span>
+            <div class="news-title">Copper LME inventories fall to multi-year lows; structural deficit forecast for 2026–27</div>
+            <div class="news-meta">2h ago · PR Editorial</div>
+          </div>
+          <div class="news-item">
+            <span class="news-tag tag-ene">Energy Trans.</span>
+            <div class="news-title">Lithium Carbonate slides to $13,700/MT — Chinese oversupply persists despite EV demand growth</div>
+            <div class="news-meta">3h ago · PR Editorial</div>
+          </div>
+          <button class="btn btn-ghost" style="width:100%;margin-top:6px;justify-content:center" onclick="showPage('news')">View all news →</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Forecasting Report</span>
+          <span style="font-size:10px;color:var(--up)">● Updated today</span>
+        </div>
+        <div class="card-body" style="padding:0">
+          <table class="fc-table">
+            <thead>
+              <tr>
+                <th>Metal</th>
+                <th>Current</th>
+                <th>3M Forecast</th>
+                <th>Trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="fc-name">HRC Steel</td><td class="fc-price">$638</td><td class="fc-price">$672</td><td class="fc-trend up">+5.3%</td></tr>
+              <tr><td class="fc-name">Copper LME</td><td class="fc-price">$9,690</td><td class="fc-price">$10,100</td><td class="fc-trend up">+4.2%</td></tr>
+              <tr><td class="fc-name">Gold</td><td class="fc-price">$2,490</td><td class="fc-price">$2,600</td><td class="fc-trend up">+4.4%</td></tr>
+              <tr><td class="fc-name">Lithium Carb.</td><td class="fc-price">$13,700</td><td class="fc-price">$13,100</td><td class="fc-trend down">−4.4%</td></tr>
+              <tr><td class="fc-name">Nickel LME</td><td class="fc-price">$18,900</td><td class="fc-price">$19,500</td><td class="fc-trend up">+3.2%</td></tr>
+            </tbody>
+          </table>
+          <div style="padding:12px 16px">
+            <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="showPage('forecast')">View full report →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ METAL CATALOG ════════════════════════════ -->
+<div class="page" id="page-catalog">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Metal Catalog</div>
+        <div class="page-sub">27 metals tracked across 4 categories · 3 global regions</div>
+      </div>
+    </div>
+    <div class="cat-tabs">
+      <button class="cat-tab all-tab active" onclick="filterCatalog('all',this)">All Metals (27)</button>
+      <button class="cat-tab fer-tab" onclick="filterCatalog('fer',this)">⬛ Ferrous (9)</button>
+      <button class="cat-tab nfe-tab" onclick="filterCatalog('nfe',this)">◈ Non-Ferrous (4)</button>
+      <button class="cat-tab pre-tab" onclick="filterCatalog('pre',this)">◆ Precious (4)</button>
+      <button class="cat-tab ene-tab" onclick="filterCatalog('ene',this)">⚡ Energy Transition (10)</button>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</div>
+
+<!-- ══ ANALYTICS ════════════════════════════════ -->
+<div class="page" id="page-analytics">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Analytics</div>
+        <div class="page-sub">Interactive analytics tools for metal market intelligence</div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-bottom:20px">
+      <div class="analytics-card">
+        <div class="ac-icon">↕</div>
+        <div class="ac-title">Price Driver Analytics</div>
+        <div class="ac-desc">Monitor import parity, arbitrage, substitution, and feedstock cost trends across all metal categories and regions.</div>
+        <div class="ac-tags">
+          <span class="ac-tag">Import Parity</span>
+          <span class="ac-tag">Arbitrage</span>
+          <span class="ac-tag">Feedstock</span>
+          <span class="ac-tag">Substitution</span>
+        </div>
+      </div>
+      <div class="analytics-card">
+        <div class="ac-icon">◎</div>
+        <div class="ac-title">Margins Analytics</div>
+        <div class="ac-desc">Visualize variable cost and margin data by feedstock type and geographic location for key metals processing hubs.</div>
+        <div class="ac-tags">
+          <span class="ac-tag">Variable Cost</span>
+          <span class="ac-tag">By Location</span>
+          <span class="ac-tag">By Feedstock</span>
+        </div>
+      </div>
+      <div class="analytics-card">
+        <div class="ac-icon">◇</div>
+        <div class="ac-title">Price Optimisation</div>
+        <div class="ac-desc">Identify optimal buy and sell signals across regions and time horizons using proprietary pricing models.</div>
+        <div class="ac-tags">
+          <span class="ac-tag">Buy Signals</span>
+          <span class="ac-tag">Sell Signals</span>
+          <span class="ac-tag">Regional</span>
+        </div>
+      </div>
+      <div class="analytics-card">
+        <div class="ac-icon">⚖</div>
+        <div class="ac-title">Supply & Demand Balances</div>
+        <div class="ac-desc">Deep-dive into global supply-demand balances, mine capacity utilization, and trade flow data across all metals.</div>
+        <div class="ac-tags">
+          <span class="ac-tag">Balances</span>
+          <span class="ac-tag">Capacity</span>
+          <span class="ac-tag">Trade Flows</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Interactive Price Comparison</span>
+        <div style="display:flex;gap:6px">
+          <button class="tab active" onclick="setTab(this,'pcomp')">Asia vs Europe</button>
+          <button class="tab" onclick="setTab(this,'pcomp')">Asia vs N.America</button>
+          <button class="tab" onclick="setTab(this,'pcomp')">All Regions</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <svg width="100%" height="200" viewBox="0 0 800 200" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E9FFF" stop-opacity=".3"/><stop offset="100%" stop-color="#4E9FFF" stop-opacity="0"/></linearGradient>
+            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00C896" stop-opacity=".3"/><stop offset="100%" stop-color="#00C896" stop-opacity="0"/></linearGradient>
+          </defs>
+          <!-- Grid lines -->
+          <line x1="0" y1="40" x2="800" y2="40" stroke="#1E3460" stroke-width="1"/>
+          <line x1="0" y1="80" x2="800" y2="80" stroke="#1E3460" stroke-width="1"/>
+          <line x1="0" y1="120" x2="800" y2="120" stroke="#1E3460" stroke-width="1"/>
+          <line x1="0" y1="160" x2="800" y2="160" stroke="#1E3460" stroke-width="1"/>
+          <!-- Asia line -->
+          <polyline points="0,140 67,135 133,120 200,125 267,110 333,115 400,100 467,105 533,90 600,85 667,80 733,75 800,65" fill="none" stroke="#4E9FFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="0,140 67,135 133,120 200,125 267,110 333,115 400,100 467,105 533,90 600,85 667,80 733,75 800,65 800,200 0,200" fill="url(#g1)"/>
+          <!-- Europe line -->
+          <polyline points="0,130 67,128 133,115 200,120 267,108 333,112 400,98 467,102 533,88 600,82 667,78 733,72 800,62" fill="none" stroke="#00C896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="0,130 67,128 133,115 200,120 267,108 333,112 400,98 467,102 533,88 600,82 667,78 733,72 800,62 800,200 0,200" fill="url(#g2)"/>
+        </svg>
+        <div style="display:flex;gap:20px;margin-top:8px">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--silver)"><span style="display:block;width:20px;height:2px;background:var(--fer)"></span> Asia Pacific</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--silver)"><span style="display:block;width:20px;height:2px;background:var(--nfe)"></span> Europe</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FORECAST ══════════════════════════════════ -->
+<div class="page" id="page-forecast">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Forecasting Report</div>
+        <div class="page-sub">18-month price predictions from independent metal market experts</div>
+      </div>
+      <div class="page-actions">
+        <span style="font-size:11px;color:var(--up);padding:6px 12px;background:rgba(0,212,160,.08);border:1px solid rgba(0,212,160,.2);border-radius:6px;">● Updated today</span>
+      </div>
+    </div>
+    <div class="grid grid-main" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">18-Month Price Forecast</span>
+          <div style="display:flex;gap:4px">
+            <button class="tab active" onclick="setTab(this,'fc')">HRC Steel</button>
+            <button class="tab" onclick="setTab(this,'fc')">Copper</button>
+            <button class="tab" onclick="setTab(this,'fc')">Gold</button>
+            <button class="tab" onclick="setTab(this,'fc')">Lithium</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <svg width="100%" height="220" viewBox="0 0 700 220" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="fcGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E9FFF" stop-opacity=".25"/><stop offset="100%" stop-color="#4E9FFF" stop-opacity="0"/></linearGradient>
+              <linearGradient id="fcRangeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E9FFF" stop-opacity=".1"/><stop offset="100%" stop-color="#4E9FFF" stop-opacity=".05"/></linearGradient>
+            </defs>
+            <line x1="0" y1="44" x2="700" y2="44" stroke="#1E3460" stroke-width="1"/>
+            <line x1="0" y1="88" x2="700" y2="88" stroke="#1E3460" stroke-width="1"/>
+            <line x1="0" y1="132" x2="700" y2="132" stroke="#1E3460" stroke-width="1"/>
+            <line x1="0" y1="176" x2="700" y2="176" stroke="#1E3460" stroke-width="1"/>
+            <!-- Forecast range -->
+            <line x1="420" y1="10" x2="420" y2="210" stroke="#1E3460" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="425" y="22" fill="#4A5A7A" font-size="10" font-family="Barlow">FORECAST</text>
+            <!-- Actual line -->
+            <polyline points="0,160 58,152 117,138 175,142 233,130 292,134 350,120 408,118" fill="none" stroke="#4E9FFF" stroke-width="2.5" stroke-linecap="round"/>
+            <polyline points="0,160 58,152 117,138 175,142 233,130 292,134 350,120 408,118 408,210 0,210" fill="url(#fcGrad)"/>
+            <!-- Forecast line (dashed) -->
+            <polyline points="408,118 466,112 525,105 583,98 641,88 700,80" fill="none" stroke="#4E9FFF" stroke-width="2.5" stroke-dasharray="6,3" stroke-linecap="round"/>
+            <!-- Confidence range -->
+            <polygon points="408,118 466,108 525,98 583,88 641,75 700,65 700,95 641,100 583,108 525,115 466,120 408,118" fill="rgba(78,159,255,0.1)"/>
+          </svg>
+          <div style="display:flex;gap:20px;margin-top:4px;font-size:11px;color:var(--silver)">
+            <span><span style="display:inline-block;width:20px;height:2px;background:var(--fer);vertical-align:middle;margin-right:4px"></span>Actual</span>
+            <span><span style="display:inline-block;width:20px;height:2px;background:var(--fer);vertical-align:middle;margin-right:4px;border-top:2px dashed var(--fer)"></span>Forecast (Mid)</span>
+            <span><span style="display:inline-block;width:20px;height:8px;background:rgba(78,159,255,.15);vertical-align:middle;margin-right:4px;border-radius:2px"></span>Confidence Range</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Confidence Range</span></div>
+          <div class="card-body">
+            <div style="margin-bottom:14px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+                <span style="color:var(--up)">Low: $580</span>
+                <span style="color:var(--silver)">Mid: $672</span>
+                <span style="color:var(--down)">High: $740</span>
+              </div>
+              <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+                <div style="height:100%;width:72%;background:linear-gradient(90deg,var(--up),var(--pre),var(--down));border-radius:4px;"></div>
+              </div>
+              <div style="font-size:11px;color:var(--dim);margin-top:6px">72% confidence · Analyst consensus</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Key Drivers</span></div>
+          <div class="card-body" style="padding-top:8px">
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px">
+              <span style="color:var(--up);font-size:14px;flex-shrink:0">▲</span>
+              <span style="font-size:12px;color:var(--silver)">India ₹12.2T infrastructure capex driving structural steel demand</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px">
+              <span style="color:var(--up);font-size:14px;flex-shrink:0">▲</span>
+              <span style="font-size:12px;color:var(--silver)">Coking coal supply tightness from Australian flooding</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px">
+              <span style="color:var(--down);font-size:14px;flex-shrink:0">▼</span>
+              <span style="font-size:12px;color:var(--silver)">EU CBAM compliance costs may redirect supply to Asian markets</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start">
+              <span style="color:var(--flat);font-size:14px;flex-shrink:0">→</span>
+              <span style="font-size:12px;color:var(--silver)">Chinese property sector weakness creating demand uncertainty</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">All Metals 3-Month Forecast</span></div>
+      <div class="card-body" style="padding:0">
+        <table class="fc-table">
+          <thead><tr><th>Metal</th><th>Category</th><th>Current ($/MT)</th><th>3M Forecast</th><th>6M Forecast</th><th>Trend</th><th>Confidence</th></tr></thead>
+          <tbody>
+            <tr><td class="fc-name">HRC Steel</td><td><span class="news-tag tag-fer" style="margin:0">Ferrous</span></td><td class="fc-price">638</td><td class="fc-price">672</td><td class="fc-price">695</td><td class="fc-trend up">+5.3%</td><td style="font-size:11px;color:var(--up)">High</td></tr>
+            <tr><td class="fc-name">Rebar</td><td><span class="news-tag tag-fer" style="margin:0">Ferrous</span></td><td class="fc-price">565</td><td class="fc-price">595</td><td class="fc-price">610</td><td class="fc-trend up">+5.3%</td><td style="font-size:11px;color:var(--up)">High</td></tr>
+            <tr><td class="fc-name">Copper</td><td><span class="news-tag tag-nfe" style="margin:0">Non-Ferrous</span></td><td class="fc-price">9,690</td><td class="fc-price">10,100</td><td class="fc-price">10,400</td><td class="fc-trend up">+4.2%</td><td style="font-size:11px;color:var(--up)">High</td></tr>
+            <tr><td class="fc-name">Aluminium</td><td><span class="news-tag tag-nfe" style="margin:0">Non-Ferrous</span></td><td class="fc-price">2,490</td><td class="fc-price">2,560</td><td class="fc-price">2,600</td><td class="fc-trend up">+2.8%</td><td style="font-size:11px;color:var(--flat)">Medium</td></tr>
+            <tr><td class="fc-name">Gold ($/oz)</td><td><span class="news-tag tag-pre" style="margin:0">Precious</span></td><td class="fc-price">2,490</td><td class="fc-price">2,600</td><td class="fc-price">2,680</td><td class="fc-trend up">+4.4%</td><td style="font-size:11px;color:var(--up)">High</td></tr>
+            <tr><td class="fc-name">Silver ($/oz)</td><td><span class="news-tag tag-pre" style="margin:0">Precious</span></td><td class="fc-price">29.20</td><td class="fc-price">31.50</td><td class="fc-price">33.00</td><td class="fc-trend up">+7.9%</td><td style="font-size:11px;color:var(--flat)">Medium</td></tr>
+            <tr><td class="fc-name">Lithium Carb.</td><td><span class="news-tag tag-ene" style="margin:0">Energy</span></td><td class="fc-price">13,700</td><td class="fc-price">13,100</td><td class="fc-price">12,800</td><td class="fc-trend down">−4.4%</td><td style="font-size:11px;color:var(--flat)">Medium</td></tr>
+            <tr><td class="fc-name">Nickel</td><td><span class="news-tag tag-ene" style="margin:0">Energy</span></td><td class="fc-price">18,900</td><td class="fc-price">19,500</td><td class="fc-price">20,100</td><td class="fc-trend up">+3.2%</td><td style="font-size:11px;color:var(--flat)">Medium</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NEWS ═════════════════════════════════════ -->
+<div class="page" id="page-news">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div><div class="page-title">PR News</div><div class="page-sub">Breaking news and analysis from global metal markets</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="cat-tab all-tab active" style="border-radius:20px">All Markets</button>
+      <button class="cat-tab fer-tab" style="border-radius:20px">Ferrous</button>
+      <button class="cat-tab nfe-tab" style="border-radius:20px">Non-Ferrous</button>
+      <button class="cat-tab pre-tab" style="border-radius:20px">Precious</button>
+      <button class="cat-tab ene-tab" style="border-radius:20px">Energy Transition</button>
+    </div>
+    <div class="grid grid-main2">
+      <div id="newsGrid"></div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Top Stories</span></div>
+          <div class="card-body" style="padding-top:8px">
+            <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+              <span class="news-tag tag-fer">Ferrous</span>
+              <div style="font-size:12px;font-weight:600;margin-top:4px">JSW Steel ₹2L crore expansion</div>
+              <div style="font-size:10px;color:var(--dim);margin-top:2px">4.2k views</div>
+            </div>
+            <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+              <span class="news-tag tag-pre">Precious</span>
+              <div style="font-size:12px;font-weight:600;margin-top:4px">Gold $2,490 — Central bank buying surge</div>
+              <div style="font-size:10px;color:var(--dim);margin-top:2px">3.8k views</div>
+            </div>
+            <div style="padding:10px 0">
+              <span class="news-tag tag-nfe">Non-Ferrous</span>
+              <div style="font-size:12px;font-weight:600;margin-top:4px">Copper LME inventory crisis deepens</div>
+              <div style="font-size:10px;color:var(--dim);margin-top:2px">2.9k views</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Market Movers</span></div>
+          <div class="card-body" style="padding-top:8px" id="newsMoversSide"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DISRUPTIONS ═══════════════════════════════ -->
+<div class="page" id="page-disruptions">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div><div class="page-title">Live Supply Disruption Tracker</div><div class="page-sub">Real-time tracking of planned and unplanned metal plant shutdowns worldwide</div></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(0,212,160,.06);border:1px solid rgba(0,212,160,.2);border-radius:8px;">
+        <div class="live-dot"></div>
+        <span style="font-size:12px;color:var(--up);font-weight:600">LIVE · Updates every 6 hours</span>
+      </div>
+    </div>
+    <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      <div class="stat-box"><div class="stat-num" style="color:var(--down)">14</div><div class="stat-lbl">Active Outages</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--flat)">5</div><div class="stat-lbl">Unplanned</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--up)">9</div><div class="stat-lbl">Planned</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--silver)">3</div><div class="stat-lbl">Restarts Today</div></div>
+    </div>
+    <div class="grid grid-main">
+      <div id="disruptionList"></div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Impact Methodology</span></div>
+        <div class="card-body" style="font-size:12px;line-height:1.7;color:var(--silver)">
+          <div style="margin-bottom:12px"><strong style="color:var(--down)">HIGH (8–12 pts)</strong><br>Large capacity (&gt;1M t/y), unplanned, cracker/smelter, extended duration</div>
+          <div style="margin-bottom:12px"><strong style="color:var(--flat)">MEDIUM (5–7 pts)</strong><br>Mid-size capacity (300K–1M t/y), planned turnaround in key region</div>
+          <div><strong style="color:var(--up)">LOW (1–4 pts)</strong><br>Small capacity (&lt;300K t/y), planned, short duration, surplus market</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ALERTS ════════════════════════════════════ -->
+<div class="page" id="page-alerts">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div><div class="page-title">Alerts Manager</div><div class="page-sub">Configure price threshold alerts and market notifications for metal commodities</div></div>
+      <button class="btn btn-gold">+ Create Alert</button>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Active Alerts</span></div>
+      <div class="card-body" style="padding:0 18px">
+        <div style="display:grid;grid-template-columns:1fr 160px 140px 120px 80px;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-transform:uppercase">Alert</span>
+          <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-transform:uppercase">Condition</span>
+          <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-transform:uppercase">Status</span>
+          <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-transform:uppercase">Last Triggered</span>
+          <span></span>
+        </div>
+        <div id="alertsTable"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ASK PR ════════════════════════════════════ -->
+<div class="page" id="page-askpr">
+  <div style="padding:24px">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Ask PR <span style="font-size:14px;color:var(--gold);letter-spacing:2px;font-family:var(--font-body);font-weight:500">GenAI</span></div>
+        <div class="page-sub">Metal market intelligence powered by AI — ask anything about prices, trends, disruptions, or forecasts</div>
+      </div>
+    </div>
+    <div class="ask-container">
+      <div class="ask-suggestions">
+        <span class="ask-sug" onclick="askQuestion(this.textContent)">What's driving gold prices up?</span>
+        <span class="ask-sug" onclick="askQuestion(this.textContent)">Summarize today's ferrous market</span>
+        <span class="ask-sug" onclick="askQuestion(this.textContent)">Lithium price outlook Q2 2026</span>
+        <span class="ask-sug" onclick="askQuestion(this.textContent)">Compare copper prices Asia vs Europe</span>
+        <span class="ask-sug" onclick="askQuestion(this.textContent)">Impact of CBAM on steel exports</span>
+        <span class="ask-sug" onclick="askQuestion(this.textContent)">Which metals have the strongest buy signal?</span>
+      </div>
+      <div class="ask-messages" id="askMessages">
+        <div class="msg msg-pr">
+          <div class="msg-avatar">PR</div>
+          <div class="msg-content">
+            <div class="msg-name">PR AI Assistant</div>
+            <div class="msg-text">Hello! I'm your <strong>Metal Market Intelligence</strong> AI assistant. I can help you with:<br><br>
+            · Real-time price analysis across <strong>27 metals</strong><br>
+            · Supply disruption impact assessment<br>
+            · Regional price comparisons (Asia · Americas · Europe)<br>
+            · 30/60/90-day forward outlooks<br>
+            · Ferrous, Non-Ferrous, Precious & Energy Transition metals<br><br>
+            What would you like to know about today's metal markets?</div>
+          </div>
+        </div>
+      </div>
+      <div class="ask-input-area">
+        <input class="ask-input" id="askInput" type="text" placeholder="Ask about any metal, price trend, disruption, or forecast..." onkeydown="if(event.key==='Enter')sendAsk()">
+        <button class="btn btn-gold" onclick="sendAsk()">▶ Ask PR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────
+const metals = [
+  // Ferrous
+  { name:"Hot Rolled Coil", cat:"fer", catLabel:"Ferrous", price:"638", unit:"$/MT", mom:"+1.9", region:"Asia" },
+  { name:"Cold Rolled Coil",cat:"fer", catLabel:"Ferrous", price:"688", unit:"$/MT", mom:"+1.7", region:"Asia" },
+  { name:"Rebar (TMT)",     cat:"fer", catLabel:"Ferrous", price:"565", unit:"$/MT", mom:"+3.1", region:"Asia" },
+  { name:"Wire Rod",        cat:"fer", catLabel:"Ferrous", price:"578", unit:"$/MT", mom:"+2.8", region:"Asia" },
+  { name:"Merchant Bar",    cat:"fer", catLabel:"Ferrous", price:"545", unit:"$/MT", mom:"+2.2", region:"Asia" },
+  { name:"Stainless Steel", cat:"fer", catLabel:"Ferrous", price:"2,180",unit:"$/MT",mom:"+1.1", region:"Europe" },
+  { name:"Structural Beams",cat:"fer", catLabel:"Ferrous", price:"572", unit:"$/MT", mom:"+2.5", region:"Asia" },
+  { name:"Angles",          cat:"fer", catLabel:"Ferrous", price:"555", unit:"$/MT", mom:"+2.0", region:"N.Am." },
+  { name:"MS Plate",        cat:"fer", catLabel:"Ferrous", price:"595", unit:"$/MT", mom:"+3.0", region:"Asia" },
+  // Non-Ferrous
+  { name:"Aluminium",  cat:"nfe", catLabel:"Non-Ferrous", price:"2,490",unit:"$/MT", mom:"+0.8", region:"LME" },
+  { name:"Copper",     cat:"nfe", catLabel:"Non-Ferrous", price:"9,690",unit:"$/MT", mom:"+1.2", region:"LME" },
+  { name:"Zinc",       cat:"nfe", catLabel:"Non-Ferrous", price:"2,810",unit:"$/MT", mom:"+0.7", region:"LME" },
+  { name:"Lead",       cat:"nfe", catLabel:"Non-Ferrous", price:"2,160",unit:"$/MT", mom:"+0.5", region:"LME" },
+  // Precious
+  { name:"Gold",      cat:"pre", catLabel:"Precious", price:"2,490",unit:"$/oz",  mom:"+3.8", region:"Global" },
+  { name:"Silver",    cat:"pre", catLabel:"Precious", price:"29.20",unit:"$/oz",  mom:"+4.1", region:"Global" },
+  { name:"Platinum",  cat:"pre", catLabel:"Precious", price:"1,010",unit:"$/oz",  mom:"+2.6", region:"Global" },
+  { name:"Palladium", cat:"pre", catLabel:"Precious", price:"1,080",unit:"$/oz",  mom:"+2.9", region:"Global" },
+  // Energy Transition
+  { name:"Nickel",          cat:"ene", catLabel:"Energy Trans.", price:"18,900",unit:"$/MT", mom:"+1.6", region:"LME" },
+  { name:"Lithium Carb.",   cat:"ene", catLabel:"Energy Trans.", price:"13,700",unit:"$/MT", mom:"-2.1", region:"China" },
+  { name:"Cobalt",          cat:"ene", catLabel:"Energy Trans.", price:"26,800",unit:"$/MT", mom:"-1.8", region:"LME" },
+  { name:"Manganese",       cat:"ene", catLabel:"Energy Trans.", price:"4,400", unit:"$/MT", mom:"+0.5", region:"Global" },
+  { name:"Chromium",        cat:"ene", catLabel:"Energy Trans.", price:"9,200", unit:"$/MT", mom:"+0.3", region:"Global" },
+  { name:"Titanium",        cat:"ene", catLabel:"Energy Trans.", price:"11,500",unit:"$/MT", mom:"+0.8", region:"Global" },
+  { name:"Tungsten",        cat:"ene", catLabel:"Energy Trans.", price:"35,000",unit:"$/MT", mom:"+0.4", region:"Global" },
+  { name:"Tin",             cat:"ene", catLabel:"Energy Trans.", price:"28,500",unit:"$/MT", mom:"+0.4", region:"LME" },
+  { name:"Vanadium",        cat:"ene", catLabel:"Energy Trans.", price:"31,000",unit:"$/MT", mom:"-0.6", region:"Global" },
+  { name:"Molybdenum",      cat:"ene", catLabel:"Energy Trans.", price:"42,000",unit:"$/MT", mom:"+0.9", region:"Global" },
+];
+
+const catColors = { fer:"var(--fer)", nfe:"var(--nfe)", pre:"var(--pre)", ene:"var(--ene)" };
+
+const disruptions = [
+  { name:"JSW Steel Vijayanagar", loc:"India · Blast Furnace", type:"Unplanned", time:"1h ago", sev:"high", metal:"HRC / Rebar" },
+  { name:"Glencore Mopani Copper", loc:"Zambia · Copper Smelter", type:"Planned", time:"3h ago", sev:"medium", metal:"Copper" },
+  { name:"Albemarle Silver Peak", loc:"USA · Lithium Mine", type:"Unplanned", time:"5h ago", sev:"high", metal:"Lithium Carb." },
+  { name:"Norilsk Nickel Kola", loc:"Russia · Nickel Refinery", type:"Planned", time:"8h ago", sev:"high", metal:"Nickel" },
+  { name:"Tata Steel Port Talbot", loc:"UK · BF-BOF Complex", type:"Planned", time:"12h ago", sev:"medium", metal:"HRC / CRC" },
+  { name:"Codelco Andina", loc:"Chile · Copper Mine", type:"Unplanned", time:"1d ago", sev:"high", metal:"Copper" },
+  { name:"RUSAL Krasnoyarsk", loc:"Russia · Al Smelter", type:"Planned", time:"1d ago", sev:"medium", metal:"Aluminium" },
+  { name:"Vale Carajas Iron Ore", loc:"Brazil · Iron Ore Mine", type:"Low impact", time:"2d ago", sev:"low", metal:"Iron Ore" },
+];
+
+const newsItems = [
+  { tag:"fer", tagLabel:"Ferrous", title:"Indian structural steel prices rise 2.3% MoM as JSW Steel targets 50% capacity expansion with ₹2 lakh crore investment", time:"25 min ago", views:"4.2k" },
+  { tag:"pre", tagLabel:"Precious", title:"Gold surpasses $2,490/oz as central bank buying hits 55-year record — emerging market reserve diversification accelerates", time:"1h ago", views:"3.8k" },
+  { tag:"nfe", tagLabel:"Non-Ferrous", title:"Copper LME inventories fall to multi-year lows; structural deficit forecast for 2026–27 as EV demand accelerates", time:"2h ago", views:"2.9k" },
+  { tag:"ene", tagLabel:"Energy Trans.", title:"Lithium Carbonate slides to $13,700/MT — Chinese oversupply persists despite growing EV battery demand globally", time:"3h ago", views:"2.1k" },
+  { tag:"fer", tagLabel:"Ferrous", title:"EU CBAM effective January 2026 — steel exporters face compliance costs, Asian supply being redirected to EU markets", time:"4h ago", views:"1.8k" },
+  { tag:"nfe", tagLabel:"Non-Ferrous", title:"Indonesian bauxite export ban continues to tighten global aluminium supply, supporting premia in Asian markets", time:"5h ago", views:"1.4k" },
+  { tag:"pre", tagLabel:"Precious", title:"Silver outperforms gold on dual safe-haven and solar panel demand — PV installations driving structural buying", time:"6h ago", views:"1.2k" },
+  { tag:"ene", tagLabel:"Energy Trans.", title:"Nickel recovers +1.6% MoM as Indonesian supply growth moderates following 2025 capacity surge", time:"8h ago", views:"980" },
+];
+
+const alertsData = [
+  { name:"Gold Price Spike",     cond:"Gold > $2,490/oz",    status:"triggered", time:"10 min ago" },
+  { name:"Lithium Floor Watch",  cond:"Lithium < $14,000/MT",status:"triggered", time:"2h ago" },
+  { name:"Copper Dip Alert",     cond:"Copper LME < $9,000", status:"watching",  time:"—" },
+  { name:"HRC Steel Rise",       cond:"HRC > $700/MT",       status:"watching",  time:"—" },
+  { name:"Disruption — Any Fe",  cond:"Ferrous plant shutdown",status:"triggered",time:"1h ago" },
+];
+
+// ── Init ─────────────────────────────────────────────────────
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// Ticker
+const tickerData = metals.slice(0,14);
+const tickerEl = document.getElementById('tickerContent');
+let tickerHTML = '';
+for(let i=0;i<2;i++) tickerData.forEach(m=>{
+  const c = parseFloat(m.mom)>0?'var(--up)':parseFloat(m.mom)<0?'var(--down)':'var(--flat)';
+  const arrow = parseFloat(m.mom)>0?'▲':parseFloat(m.mom)<0?'▼':'→';
+  tickerHTML += `<div class="ticker-item"><span class="ticker-name">${m.name}</span><span class="ticker-price">${m.price} ${m.unit}</span><span style="color:${c};font-weight:600">${arrow} ${m.mom}%</span></div>`;
+});
+tickerEl.innerHTML = tickerHTML;
+
+// Heatmap
+const hmMetals = ["Gold","Silver","Copper","HRC","Rebar","Aluminium","Nickel","Lithium Carb.","Cobalt","Manganese","Zinc","Lead","Platinum","Titanium","Tin"];
+const hmVals   = [3.8,4.1,1.2,1.9,3.1,0.8,1.6,-2.1,-1.8,0.5,0.7,0.5,2.6,0.8,0.4];
+const hmGrid = document.getElementById('heatmapGrid');
+hmMetals.forEach((m,i)=>{
+  const v = hmVals[i];
+  const intensity = Math.min(Math.abs(v)/5,1);
+  const bg = v>0 ? `rgba(0,212,160,${0.08+intensity*0.3})` : v<0 ? `rgba(255,77,106,${0.08+intensity*0.3})` : 'rgba(240,160,69,0.1)';
+  const col = v>0?'var(--up)':v<0?'var(--down)':'var(--flat)';
+  hmGrid.innerHTML += `<div class="hm-cell" style="background:${bg}"><div class="hm-name" style="color:${col}">${m}</div><div class="hm-val" style="color:${col}">${v>0?'+':''}${v}%</div></div>`;
+});
+
+// Metal rows
+const rowContainer = document.getElementById('metalRows');
+metals.slice(0,8).forEach(m=>{
+  const mom = parseFloat(m.mom);
+  const c = mom>0?'var(--up)':mom<0?'var(--down)':'var(--flat)';
+  const arrow = mom>0?'▲':mom<0?'▼':'→';
+  rowContainer.innerHTML += `
+    <div class="metal-row">
+      <div><div class="metal-dot" style="background:${catColors[m.cat]}"></div></div>
+      <div><div class="metal-name">${m.name}</div><div class="metal-cat">${m.catLabel}</div></div>
+      <div class="metal-price">${m.price} <span style="font-size:10px;color:var(--dim)">${m.unit}</span></div>
+      <div class="metal-mom" style="color:${c}">${arrow} ${m.mom}%</div>
+      <div class="metal-region">${m.region}</div>
+    </div>`;
+});
+
+// Product catalog
+function buildCatalog(filter){
+  const grid = document.getElementById('productGrid');
+  const filtered = filter==='all'?metals:metals.filter(m=>m.cat===filter);
+  grid.innerHTML = filtered.map(m=>{
+    const mom = parseFloat(m.mom);
+    const c = mom>0?'var(--up)':mom<0?'var(--down)':'var(--flat)';
+    const arrow = mom>0?'▲':mom<0?'▼':'→';
+    const cls = mom>0?'up':mom<0?'down':'flat';
+    return `<div class="product-card pc-${m.cat}">
+      <div class="pc-name">${m.name}</div>
+      <div class="pc-region">${m.catLabel} · ${m.region}</div>
+      <div class="pc-price" style="color:${catColors[m.cat]}">${m.price}</div>
+      <div class="pc-unit">${m.unit} · Incoterm FOB</div>
+      <span class="pc-change ${cls}">${arrow} ${m.mom}% MoM</span>
+    </div>`;
+  }).join('');
+}
+buildCatalog('all');
+
+function filterCatalog(cat, el){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  buildCatalog(cat);
+}
+
+// Disruptions
+const disList = document.getElementById('disruptionList');
+if(disList) disruptions.forEach(d=>{
+  const sc = d.sev==='high'?'sev-high':d.sev==='medium'?'sev-medium':'sev-low';
+  disList.innerHTML += `<div class="disruption-item ${d.sev}" style="margin-bottom:10px">
+    <div class="dis-header">
+      <span class="dis-name">${d.name}</span>
+      <span class="dis-sev ${sc}">${d.sev.toUpperCase()}</span>
+    </div>
+    <div class="dis-meta">${d.loc} · ${d.type} · ${d.time}</div>
+    <div style="font-size:11px;color:var(--gold);margin-top:4px">Affected: ${d.metal}</div>
+  </div>`;
+});
+
+// News
+const newsGrid = document.getElementById('newsGrid');
+const tagCls = {fer:'tag-fer',nfe:'tag-nfe',pre:'tag-pre',ene:'tag-ene'};
+if(newsGrid) newsItems.forEach(n=>{
+  newsGrid.innerHTML += `<div class="card" style="margin-bottom:12px">
+    <div class="card-body">
+      <span class="news-tag ${tagCls[n.tag]}">${n.tagLabel}</span>
+      <div class="news-title" style="margin-top:6px">${n.title}</div>
+      <div class="news-meta" style="margin-top:6px">${n.time} · PR Editorial · ${n.views} views</div>
+    </div>
+  </div>`;
+});
+const side = document.getElementById('newsMoversSide');
+if(side) metals.filter(m=>Math.abs(parseFloat(m.mom))>1.5).slice(0,5).forEach(m=>{
+  const mom=parseFloat(m.mom); const c=mom>0?'var(--up)':'var(--down)'; const a=mom>0?'▲':'▼';
+  side.innerHTML+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+    <div><div style="font-size:12px;font-weight:600">${m.name}</div><div style="font-size:10px;color:var(--dim)">${m.catLabel}</div></div>
+    <span style="color:${c};font-family:var(--font-mono);font-size:13px;font-weight:700">${a} ${m.mom}%</span>
+  </div>`;
+});
+
+// Alerts table
+const alertsTbl = document.getElementById('alertsTable');
+if(alertsTbl) alertsData.forEach(a=>{
+  const sc = a.status==='triggered'?'status-triggered':'status-watching';
+  const sl = a.status==='triggered'?'● Triggered':'◌ Watching';
+  alertsTbl.innerHTML += `<div class="alert-row">
+    <div><div class="alert-name">${a.name}</div><div class="alert-cond">${a.cond}</div></div>
+    <div style="font-size:12px;color:var(--silver)">${a.cond}</div>
+    <div><span class="alert-status ${sc}">${sl}</span></div>
+    <div style="font-size:12px;color:var(--dim)">${a.time}</div>
+    <div><button class="btn btn-ghost" style="padding:4px 10px;font-size:11px">Edit</button></div>
+  </div>`;
+});
+
+// ── Navigation ────────────────────────────────────────────────
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const page = document.getElementById('page-'+id);
+  if(page) page.classList.add('active');
+  const nav = document.querySelector(`.nav-item[onclick*="'${id}'"]`);
+  if(nav) nav.classList.add('active');
+  document.getElementById('notifyDrop').classList.remove('open');
+}
+
+function setTab(el, group){
+  const parent = el.closest('[style*="gap"], .card-header, .card-body');
+  el.closest('div').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleNotify(){
+  document.getElementById('notifyDrop').classList.toggle('open');
+}
+
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.notify-dropdown')&&!e.target.closest('.hbtn'))
+    document.getElementById('notifyDrop').classList.remove('open');
+  if(e.target.closest('.region-pill')){
+    document.querySelectorAll('.region-pill').forEach(p=>p.classList.remove('active'));
+    e.target.classList.add('active');
+  }
+});
+
+// ── Ask PR ────────────────────────────────────────────────────
+const responses = {
+  "gold":    "**Gold** is currently trading at <strong>$2,490/oz</strong>, driven by three key factors:<br><br>1. <strong>Central bank buying</strong> at 55-year record highs — emerging markets (China, India, Türkiye) are diversifying reserves away from USD.<br>2. <strong>Geopolitical safe-haven demand</strong> intensifying amid US-China trade tensions.<br>3. <strong>USD weakness</strong> following Fed rate cut signals for Q2-Q3 2026.<br><br>3M forecast: <strong>$2,600/oz (+4.4%)</strong> — Bullish signal.",
+  "ferrous": "**Ferrous metals** showed strong momentum in Jan-26 with structural steel up <strong>+2.3% MoM</strong>:<br><br>· TMT Rebar: <strong>+3.1%</strong> (India safeguard duties + seasonal demand)<br>· MS Plate: <strong>+3.0%</strong> (infrastructure projects)<br>· HRC: <strong>+1.9%</strong> (automotive recovery)<br><br>Key driver: coking coal hit multi-month highs due to Australian flooding. India's ₹12.2T capex budget is a structural demand catalyst.",
+  "lithium": "**Lithium Carbonate** is under pressure at <strong>$13,700/MT (−2.1% MoM)</strong>.<br><br><strong>Bearish factors:</strong><br>· Chinese overproduction creating persistent supply glut<br>· EV battery chemistry shift: LFP adoption rising vs NMC (lower lithium intensity)<br>· Chile/Argentina capacity additions targeting 1M tonne LCE/year by 2027<br><br><strong>3M Forecast:</strong> $13,100/MT (−4.4%). Recommend <strong>HOLD</strong> position.",
+  "copper":  "**Copper LME** is trading at <strong>$9,690/MT (+1.2% MoM)</strong>, approaching multi-year highs.<br><br><strong>Bullish catalysts:</strong><br>· LME inventories at multi-year lows (critical supply signal)<br>· Structural EV deficit: each EV uses 3–4x more copper than ICE<br>· Chile/Peru mine disruptions tightening seaborne supply<br>· India 500GW green energy requires copper-intensive grid build-out<br><br><strong>3M Forecast:</strong> $10,100/MT (+4.2%). <strong>BUY signal.</strong>",
+  "cbam":    "The **EU CBAM (Carbon Border Adjustment Mechanism)** became effective <strong>January 2026</strong> and is reshaping global steel flows:<br><br>· Steel exporters to EU now face <strong>carbon compliance costs</strong> proportional to embedded emissions<br>· Asian (especially Chinese/Indian) steel producers face higher barriers to EU market entry<br>· Excess Asian supply is being <strong>redirected toward other markets</strong>, creating price divergence<br>· North America maintains its own tariff floor via Section 232<br><br>Net impact: European steel prices trading at <strong>~19% premium</strong> over Asia.",
+  "buy":     "Based on current IMM-MI data, the strongest <strong>BUY signals</strong> are:<br><br>🟢 <strong>Gold</strong> — Central bank buying, USD weakness, geopolitical risk<br>🟢 <strong>Copper</strong> — LME inventory squeeze, EV structural deficit<br>🟢 <strong>Silver</strong> — Solar PV demand +14% YoY, dual safe-haven role<br>🟢 <strong>HRC / Rebar</strong> — India infrastructure capex, safeguard duties<br><br>⚠️ <strong>HOLD:</strong> Nickel (supply moderating), Aluminium (stable range)<br>🔴 <strong>AVOID:</strong> Lithium Carbonate, Cobalt (persistent oversupply)",
+  "default": "I'm analyzing current metal market data for you. Based on our February 2026 intelligence:<br><br>· <strong>27 metals</strong> tracked across Asia, North America & Europe<br>· Ferrous Index at <strong>187.4</strong> (+2.3% MoM) — Bullish<br>· Precious Index at <strong>241.3</strong> (+3.8% MoM) — Strong Bullish<br>· Energy Transition Index at <strong>134.6</strong> (−0.4% MoM) — Bearish<br><br>Please ask me a more specific question about any metal, region, or market trend!"
+};
+
+function askQuestion(q){
+  document.getElementById('askInput').value = q;
+  sendAsk();
+}
+
+function sendAsk(){
+  const input = document.getElementById('askInput');
+  const q = input.value.trim(); if(!q) return;
+  const msgs = document.getElementById('askMessages');
+  msgs.innerHTML += `<div class="msg msg-user"><div class="msg-avatar" style="background:var(--bg4);color:var(--silver)">JD</div><div class="msg-content"><div class="msg-name">John Doe</div><div class="msg-text">${q}</div></div></div>`;
+  input.value = '';
+  setTimeout(()=>{
+    const ql = q.toLowerCase();
+    let resp = responses.default;
+    if(ql.includes('gold')||ql.includes('precious')) resp = responses.gold;
+    else if(ql.includes('ferrous')||ql.includes('steel')||ql.includes('rebar')) resp = responses.ferrous;
+    else if(ql.includes('lithium')||ql.includes('battery')||ql.includes('energy')) resp = responses.lithium;
+    else if(ql.includes('copper')) resp = responses.copper;
+    else if(ql.includes('cbam')||ql.includes('carbon')||ql.includes('eu')) resp = responses.cbam;
+    else if(ql.includes('buy')||ql.includes('signal')||ql.includes('recommend')) resp = responses.buy;
+    msgs.innerHTML += `<div class="msg msg-pr"><div class="msg-avatar">PR</div><div class="msg-content"><div class="msg-name">PR AI Assistant</div><div class="msg-text">${resp}</div></div></div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 600);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ── Index Modal ───────────────────────────────────────────────
+const indexModalData = {
+  fer: {
+    name: "Ferrous Metals Index",
+    sub: "Index Price · IMM-MI (Jan 2020 = 100)",
+    color: "var(--fer)",
+    colorHex: "#4E9FFF",
+    currentPrice: "187.4",
+    change1m: "+2.3%",
+    changeDir: "up",
+    avg3m: "183.1",
+    region: "Asia Pacific",
+    regions: ["Asia Pacific","North America","Europe"],
+    countries: ["All Countries","India","China","Japan","South Korea","USA","Germany"],
+    high52w: "192.6",
+    low52w: "161.3",
+    avg3mVal: "183.1",
+    unit: "IMM-MI",
+    // SVG chart points: historical (Jan–Mar) + forecast (Apr–Jun)
+    histPoints: "40,220 110,200 180,175 250,185 320,165 390,170 460,150 530,155 600,135 670,125 740,115 810,108",
+    fcPoints:   "810,108 880,100 950,90 1020,82 1090,72 1160,62",
+    fcBand:     "810,108 880,96 950,84 1020,75 1090,63 1160,52 1160,75 1090,84 1020,92 950,102 880,112 810,108",
+    xLabels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun"],
+    commentary: "Ferrous metal prices rose sharply in Jan-26, with structural steel up <strong>+2.3% MoM</strong>. TMT Rebar led gains at +3.1% and MS Plate at +3.0%, driven by coking coal cost surge and strong seasonal demand from government infrastructure programs. India's safeguard duty policy continues to provide a firm domestic price floor.",
+    supply: "Australian flooding disrupted coking coal mines, causing force majeure declarations and tightening seaborne availability. India's iron ore supply remained stable, but imports elevated ahead of Lunar New Year. JSW Steel announced a ₹2 lakh crore expansion targeting 50% capacity increase by decade's end.",
+    demand: "India's Union Budget 2026–27 allocated <strong>₹12.2 trillion</strong> in capital expenditure focused on infrastructure — the strongest structural demand signal in years. Automotive sector exports rose 19% to 5.3M units in FY25. Government housing and highway programs sustaining rebar and wire rod demand.",
+    feedstock: "<strong>Coking Coal:</strong> Multi-month highs due to Australian supply disruptions. India relies on domestic coal for ~80% of needs but global pricing is spilling over.<br><br><strong>Iron Ore:</strong> Elevated on Lunar New Year restocking and tight seaborne supply. 62% Fe fines trading at $105–110/MT.",
+    fcData: [
+      { period:"3M (Apr 2026)", low:"180", mid:"194", high:"205", conf:"72%" },
+      { period:"6M (Jul 2026)", low:"178", mid:"198", high:"212", conf:"65%" },
+      { period:"1Y (Jan 2027)", low:"172", mid:"202", high:"220", conf:"55%" },
+      { period:"2Y (Jan 2028)", low:"168", mid:"208", high:"228", conf:"42%" },
+    ],
+    priceSummary: [
+      { label:"Current Month", val:"187.4", chg:"" },
+      { label:"3 Month Avg",   val:"183.1", chg:"+2.4%" },
+      { label:"6 Month Avg",   val:"175.8", chg:"+6.6%" },
+      { label:"52W High",      val:"192.6", chg:"" },
+      { label:"52W Low",       val:"161.3", chg:"" },
+    ]
+  },
+  nfe: {
+    name: "Non-Ferrous Metals Index",
+    sub: "Index Price · IMM-MI (Jan 2020 = 100)",
+    color: "var(--nfe)",
+    colorHex: "#00C896",
+    currentPrice: "162.8",
+    change1m: "+1.1%",
+    changeDir: "up",
+    avg3m: "160.2",
+    region: "LME Global",
+    regions: ["LME Global","Asia Pacific","North America","Europe"],
+    countries: ["All Countries","China","USA","Germany","Japan","South Korea"],
+    high52w: "168.4",
+    low52w: "148.5",
+    avg3mVal: "160.2",
+    unit: "IMM-MI",
+    histPoints: "40,240 110,232 180,218 250,225 320,210 390,215 460,200 530,205 600,190 670,195 740,182 810,185",
+    fcPoints:   "810,185 880,178 950,168 1020,160 1090,150 1160,142",
+    fcBand:     "810,185 880,172 950,160 1020,150 1090,138 1160,128 1160,158 1090,164 1020,172 950,178 880,186 810,185",
+    commentary: "Non-ferrous base metals traded in a narrow range in Jan-26 with mixed signals. Copper showed resilience at <strong>$9,690/MT</strong>, supported by LME inventory squeeze. Aluminium firm on Chinese smelter curtailments. Zinc and Lead stable on galvanizing and battery demand.",
+    supply: "LME copper inventories hit multi-year lows — a critical supply signal. Chilean and Peruvian mine disruptions from social protests reduced Q4-25 output. Indonesian bauxite export ban tightened global aluminium supply. Grade depletion at major copper mines signals structural deficit by 2026–27.",
+    demand: "Global EV sales projected at <strong>17M units</strong> in 2026. Each EV uses 3–4× more copper than an ICE vehicle. India's 500GW green energy target by 2030 requires extensive copper-intensive grid upgrades and transmission infrastructure investment.",
+    feedstock: "<strong>Bauxite:</strong> Indonesian export ban ongoing — supporting aluminium premia in Asia and Europe.<br><br><strong>Copper Ore:</strong> Chilean/Peruvian grades declining. Scrap copper availability tightening as collection rates plateau in developed markets.",
+    fcData: [
+      { period:"3M (Apr 2026)", low:"158", mid:"166", high:"174", conf:"68%" },
+      { period:"6M (Jul 2026)", low:"155", mid:"170", high:"182", conf:"60%" },
+      { period:"1Y (Jan 2027)", low:"150", mid:"175", high:"190", conf:"52%" },
+      { period:"2Y (Jan 2028)", low:"145", mid:"180", high:"200", conf:"40%" },
+    ],
+    priceSummary: [
+      { label:"Current Month", val:"162.8", chg:"" },
+      { label:"3 Month Avg",   val:"160.2", chg:"+1.6%" },
+      { label:"6 Month Avg",   val:"155.6", chg:"+4.6%" },
+      { label:"52W High",      val:"168.4", chg:"" },
+      { label:"52W Low",       val:"148.5", chg:"" },
+    ]
+  },
+  pre: {
+    name: "Precious Metals Index",
+    sub: "Index Price · IMM-MI (Jan 2020 = 100)",
+    color: "var(--pre)",
+    colorHex: "#FFB830",
+    currentPrice: "241.3",
+    change1m: "+3.8%",
+    changeDir: "up",
+    avg3m: "236.5",
+    region: "Global Spot",
+    regions: ["Global Spot","LBMA London","COMEX New York","Asia"],
+    countries: ["All Countries","USA","UK","Switzerland","China","India"],
+    high52w: "244.2",
+    low52w: "196.8",
+    avg3mVal: "236.5",
+    unit: "IMM-MI",
+    histPoints: "40,280 110,262 180,248 250,232 320,218 390,210 460,196 530,188 600,175 670,180 740,165 810,158",
+    fcPoints:   "810,158 880,148 950,136 1020,125 1090,114 1160,102",
+    fcBand:     "810,158 880,142 950,128 1020,115 1090,102 1160,88 1160,118 1090,128 1020,137 950,146 880,156 810,158",
+    commentary: "Precious metals strengthened sharply in Jan-26 with Gold at <strong>$2,490/oz</strong> — a fresh high. Safe-haven demand intensified amid US-China trade tensions and geopolitical uncertainty. Central bank buying at 55-year record. Silver outperformed on dual investment and industrial demand.",
+    supply: "Global gold mine production grew just 1.2% YoY in 2025 — tight supply vs surging investment demand. Secondary palladium from catalytic converter recycling provides ~30% of supply. Silver mine output broadly stable; recycling supply elevated from solar panel recycling uptick.",
+    demand: "Central banks added <strong>1,037 tonnes</strong> of gold in 2025 — highest since 1967. India's RBI added 72 tonnes. Silver demand for solar PV panels projected +14% YoY in 2026 driven by renewable energy expansion globally. Investment ETF inflows to gold accelerating.",
+    feedstock: "<strong>Gold Mining:</strong> All-in sustaining costs (AISC) averaging $1,280/oz globally — rising labor and energy costs compressing margins at some producers.<br><br><strong>Silver:</strong> Mining by-product economics (copper/zinc/lead mines) limiting primary silver supply response to price signals.",
+    fcData: [
+      { period:"3M (Apr 2026)", low:"232", mid:"252", high:"268", conf:"74%" },
+      { period:"6M (Jul 2026)", low:"228", mid:"260", high:"278", conf:"66%" },
+      { period:"1Y (Jan 2027)", low:"222", mid:"268", high:"290", conf:"56%" },
+      { period:"2Y (Jan 2028)", low:"215", mid:"278", high:"308", conf:"44%" },
+    ],
+    priceSummary: [
+      { label:"Current Month", val:"241.3", chg:"" },
+      { label:"3 Month Avg",   val:"236.5", chg:"+2.0%" },
+      { label:"6 Month Avg",   val:"224.8", chg:"+7.3%" },
+      { label:"52W High",      val:"244.2", chg:"" },
+      { label:"52W Low",       val:"196.8", chg:"" },
+    ]
+  },
+  ene: {
+    name: "Energy Transition Index",
+    sub: "Index Price · IMM-MI (Jan 2020 = 100)",
+    color: "var(--ene)",
+    colorHex: "#FF6B35",
+    currentPrice: "134.6",
+    change1m: "−0.4%",
+    changeDir: "down",
+    avg3m: "135.8",
+    region: "Global",
+    regions: ["Global","China","LME","South America"],
+    countries: ["All Countries","China","DRC","Chile","Indonesia","Australia"],
+    high52w: "148.2",
+    low52w: "130.1",
+    avg3mVal: "135.8",
+    unit: "IMM-MI",
+    histPoints: "40,148 110,152 180,145 250,155 320,162 390,168 460,164 530,170 600,175 670,178 740,174 810,176",
+    fcPoints:   "810,176 880,178 950,182 1020,185 1090,183 1160,180",
+    fcBand:     "810,176 880,172 950,175 1020,178 1090,176 1160,172 1160,190 1090,192 1020,194 950,192 880,186 810,176",
+    commentary: "Energy transition metals showed divergent performance in Jan-26. Lithium Carbonate fell <strong>−2.1% MoM</strong> on Chinese oversupply. Cobalt −1.8% on DRC normalization. Nickel recovered +1.6% as Indonesian supply growth moderated. Manganese remained stable on steel sector demand.",
+    supply: "Chinese lithium producers continue to oversupply — capacity additions from 2023–24 investments are flooding the market. DRC cobalt supply normalising post-2024 disruptions. Indonesia's nickel HPAL projects ramping up, adding significant new supply to the global market.",
+    demand: "Global lithium-ion battery demand projected at <strong>3,500 GWh by 2030</strong> (from 1,200 GWh in 2025). Grid-scale energy storage deployments growing +45% YoY. EV adoption accelerating across EU and China — structural demand floor for all battery metals despite near-term price weakness.",
+    feedstock: "<strong>Lithium:</strong> Chile and Argentina brine operations expanding rapidly. Hard rock spodumene from Australia adding to oversupply.<br><br><strong>Cobalt:</strong> DRC artisanal mining reforms improving traceability but increasing costs. Battery recycling (black mass) adding secondary cobalt supply.",
+    fcData: [
+      { period:"3M (Apr 2026)", low:"128", mid:"136", high:"144", conf:"60%" },
+      { period:"6M (Jul 2026)", low:"125", mid:"138", high:"150", conf:"52%" },
+      { period:"1Y (Jan 2027)", low:"120", mid:"142", high:"158", conf:"44%" },
+      { period:"2Y (Jan 2028)", low:"118", mid:"148", high:"170", conf:"35%" },
+    ],
+    priceSummary: [
+      { label:"Current Month", val:"134.6", chg:"" },
+      { label:"3 Month Avg",   val:"135.8", chg:"−0.9%" },
+      { label:"6 Month Avg",   val:"138.2", chg:"−2.6%" },
+      { label:"52W High",      val:"148.2", chg:"" },
+      { label:"52W Low",       val:"130.1", chg:"" },
+    ]
+  }
+};
+
+function openIndexModal(cat) {
+  const d = indexModalData[cat];
+  if(!d) return;
+  // Populate header
+  document.getElementById('im-name').textContent = d.name;
+  document.getElementById('im-sub').textContent = d.sub;
+  document.getElementById('im-name').style.color = d.color;
+  document.getElementById('im-price').textContent = d.currentPrice;
+  document.getElementById('im-price').style.color = d.color;
+  document.getElementById('im-change').textContent = (d.changeDir==='up'?'▲ ':d.changeDir==='down'?'▼ ':'→ ') + d.change1m;
+  document.getElementById('im-change').className = 'kpi-change ' + (d.changeDir==='up'?'up':d.changeDir==='down'?'down':'flat');
+  document.getElementById('im-avg3m').textContent = d.avg3m;
+  // Region / Country selects
+  const rSel = document.getElementById('im-region');
+  rSel.innerHTML = d.regions.map(r=>`<option>${r}</option>`).join('');
+  const cSel = document.getElementById('im-country');
+  cSel.innerHTML = d.countries.map(c=>`<option>${c}</option>`).join('');
+  // Chart accent color
+  document.getElementById('im-hist-line').setAttribute('stroke', d.colorHex);
+  document.getElementById('im-hist-fill').setAttribute('fill', d.colorHex);
+  document.getElementById('im-fc-line').setAttribute('stroke', d.colorHex);
+  document.getElementById('im-fc-band').setAttribute('fill', d.colorHex);
+  // Chart points
+  document.getElementById('im-hist-line').setAttribute('points', d.histPoints);
+  document.getElementById('im-hist-fill').setAttribute('points', d.histPoints + ' 1160,340 40,340');
+  document.getElementById('im-fc-line').setAttribute('points', d.fcPoints);
+  document.getElementById('im-fc-band').setAttribute('points', d.fcBand);
+  // 52W stats
+  document.getElementById('im-52h').textContent = d.high52w;
+  document.getElementById('im-52l').textContent = d.low52w;
+  document.getElementById('im-avg3m2').textContent = d.avg3mVal;
+  // Tab content
+  document.getElementById('im-tab-commentary').innerHTML = d.commentary;
+  document.getElementById('im-tab-supply').innerHTML = d.supply;
+  document.getElementById('im-tab-demand').innerHTML = d.demand;
+  document.getElementById('im-tab-feedstock').innerHTML = d.feedstock;
+  // Forecast range table
+  document.getElementById('im-fc-table').innerHTML = d.fcData.map(f=>`
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--white)">${f.period}</td>
+      <td style="padding:10px 8px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:12px;color:var(--down)">${f.low}</td>
+      <td style="padding:10px 8px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:13px;font-weight:700;color:${d.color}">${f.mid}</td>
+      <td style="padding:10px 8px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:12px;color:var(--up)">${f.high}</td>
+      <td style="padding:10px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--dim)">${f.conf}</td>
+    </tr>`).join('');
+  // Price summary
+  document.getElementById('im-price-summary').innerHTML = d.priceSummary.map((p,i)=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:${i===0?'0 0 14px':'12px 0'};${i===0?'border-bottom:2px solid var(--border)':'border-bottom:1px solid var(--border)'}">
+      <span style="font-size:${i===0?'14px':'13px'};color:${i===0?'var(--silver)':'var(--dim)'};font-weight:${i===0?'600':'400'}">${p.label}</span>
+      <div style="text-align:right">
+        <span style="font-family:var(--font-mono);font-size:${i===0?'22px':'15px'};font-weight:700;color:${i===0?d.color:'var(--white)'}">${p.val}</span>
+        ${p.chg?`<span style="margin-left:8px;font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:${p.chg.startsWith('-')?'rgba(255,77,106,.1)':'rgba(0,212,160,.1)'};color:${p.chg.startsWith('-')?'var(--down)':'var(--up)'}">${p.chg}</span>`:''}
+      </div>
+    </div>`).join('');
+  // Switch to first tab
+  switchImTab('commentary', d.color);
+  // Show modal
+  document.getElementById('indexModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeIndexModal() {
+  document.getElementById('indexModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function switchImTab(tab, color) {
+  ['commentary','supply','demand','feedstock','forecast','pricesummary'].forEach(t => {
+    document.getElementById('im-tab-btn-'+t).classList.remove('active');
+    const el = document.getElementById('im-tab-content-'+t);
+    if(el) el.style.display = 'none';
+  });
+  document.getElementById('im-tab-btn-'+tab).classList.add('active');
+  const content = document.getElementById('im-tab-content-'+tab);
+  if(content) content.style.display = 'block';
+}
+
+function setImTimeRange(btn, range) {
+  btn.closest('.im-time-btns').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+</script>
+
+<!-- ══ INDEX DETAIL MODAL ══════════════════════ -->
+<div id="indexModal" class="im-overlay" onclick="if(event.target===this)closeIndexModal()">
+  <div class="im-modal">
+    <!-- Modal Header -->
+    <div class="im-header">
+      <div class="im-header-left">
+        <div>
+          <div id="im-name" class="im-title">Ferrous Metals Index</div>
+          <div id="im-sub" class="im-subtitle">Index Price · IMM-MI (Jan 2020 = 100)</div>
+        </div>
+      </div>
+      <button class="im-close" onclick="closeIndexModal()">✕</button>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="im-stats-row">
+      <div class="im-stat-group">
+        <div class="im-stat-label">CURRENT PRICE</div>
+        <div style="display:flex;align-items:baseline;gap:12px">
+          <div id="im-price" class="im-stat-val">187.4</div>
+          <span id="im-change" class="kpi-change up">▲ +2.3%</span>
+        </div>
+      </div>
+      <div class="im-stat-group">
+        <div class="im-stat-label">CHANGE (1M)</div>
+        <div class="im-stat-val2 up" id="im-change2">+2.3%</div>
+      </div>
+      <div class="im-stat-group">
+        <div class="im-stat-label">AVG (3M)</div>
+        <div class="im-stat-val2" id="im-avg3m">183.1</div>
+      </div>
+      <div class="im-stat-group">
+        <div class="im-stat-label">REGION</div>
+        <select id="im-region" class="im-select">
+          <option>Asia Pacific</option>
+        </select>
+      </div>
+      <div class="im-stat-group">
+        <div class="im-stat-label">COUNTRY</div>
+        <select id="im-country" class="im-select">
+          <option>All Countries</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="im-chart-section">
+      <div class="im-chart-header">
+        <div class="im-section-label">PRICING DATA</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div class="im-time-btns">
+            <button class="active" onclick="setImTimeRange(this,'3m')">3M</button>
+            <button onclick="setImTimeRange(this,'6m')">6M</button>
+            <button onclick="setImTimeRange(this,'1y')">1Y</button>
+            <button onclick="setImTimeRange(this,'3y')">3Y</button>
+            <button onclick="setImTimeRange(this,'5y')">5Y</button>
+            <button onclick="setImTimeRange(this,'max')">Max</button>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost" style="padding:5px 12px;font-size:11px">+ Compare</button>
+            <button class="btn btn-ghost" style="padding:5px 12px;font-size:11px">⤓ Export</button>
+            <button class="btn btn-ghost" style="padding:5px 12px;font-size:11px">🔔 Set Alert</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart Legend -->
+      <div style="display:flex;gap:20px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--silver)">
+          <svg width="20" height="3"><line x1="0" y1="1.5" x2="20" y2="1.5" id="legend-hist" stroke="#4E9FFF" stroke-width="2.5"/></svg>
+          Historical
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--silver)">
+          <svg width="20" height="3"><line x1="0" y1="1.5" x2="20" y2="1.5" id="legend-fc" stroke="#4E9FFF" stroke-width="2" stroke-dasharray="4,2"/></svg>
+          Forecast
+        </div>
+      </div>
+
+      <!-- Main Chart SVG -->
+      <div style="position:relative">
+        <svg id="imChart" width="100%" height="220" viewBox="0 0 1200 340" preserveAspectRatio="none" style="display:block">
+          <defs>
+            <linearGradient id="im-hist-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4E9FFF" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#4E9FFF" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Grid lines -->
+          <line x1="40" y1="60"  x2="1160" y2="60"  stroke="#1E3460" stroke-width="1"/>
+          <line x1="40" y1="120" x2="1160" y2="120" stroke="#1E3460" stroke-width="1"/>
+          <line x1="40" y1="180" x2="1160" y2="180" stroke="#1E3460" stroke-width="1"/>
+          <line x1="40" y1="240" x2="1160" y2="240" stroke="#1E3460" stroke-width="1"/>
+          <line x1="40" y1="300" x2="1160" y2="300" stroke="#1E3460" stroke-width="1"/>
+          <!-- Forecast divider -->
+          <line id="im-fc-divider" x1="810" y1="40" x2="810" y2="320" stroke="#1E3460" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="816" y="54" fill="#4A5A7A" font-size="18" font-family="Barlow">FORECAST →</text>
+          <!-- Forecast confidence band -->
+          <polygon id="im-fc-band" points="" fill="#4E9FFF" opacity="0.08"/>
+          <!-- Historical fill -->
+          <polygon id="im-hist-fill" points="" fill="url(#im-hist-grad)" opacity="1"/>
+          <!-- Historical line -->
+          <polyline id="im-hist-line" points="" fill="none" stroke="#4E9FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Forecast line (dashed) -->
+          <polyline id="im-fc-line" points="" fill="none" stroke="#4E9FFF" stroke-width="2.5" stroke-dasharray="8,4" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Month labels -->
+          <text x="40"   y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Jan</text>
+          <text x="180"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Feb</text>
+          <text x="320"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Mar</text>
+          <text x="460"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Apr</text>
+          <text x="600"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">May</text>
+          <text x="740"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Jun</text>
+          <text x="880"  y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Jul</text>
+          <text x="1020" y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Aug</text>
+          <text x="1160" y="328" fill="#4A5A7A" font-size="16" font-family="Barlow" text-anchor="middle">Sep</text>
+        </svg>
+      </div>
+
+      <!-- Forecast Range label -->
+      <div class="im-section-label" style="margin-top:16px">FORECAST RANGE</div>
+      <div class="im-time-btns" style="margin-bottom:4px">
+        <button class="active" onclick="setImTimeRange(this,'fc3m')">3M</button>
+        <button onclick="setImTimeRange(this,'fc6m')">6M 🔒</button>
+        <button onclick="setImTimeRange(this,'fc1y')">1Y 🔒</button>
+        <button onclick="setImTimeRange(this,'fc2y')">2Y 🔒</button>
+      </div>
+
+      <div style="margin-top:12px;text-align:center">
+        <button class="btn btn-gold" style="padding:9px 24px" onclick="showPage('forecast');closeIndexModal()">⊞ View Full Details</button>
+      </div>
+    </div>
+
+    <!-- 52W Stats Bar -->
+    <div class="im-stats-bar">
+      <div class="im-mini-stat">
+        <div class="im-mini-label">52W HIGH</div>
+        <div class="im-mini-val up" id="im-52h">192.6</div>
+      </div>
+      <div class="im-mini-stat">
+        <div class="im-mini-label">52W LOW</div>
+        <div class="im-mini-val down" id="im-52l">161.3</div>
+      </div>
+      <div class="im-mini-stat">
+        <div class="im-mini-label">3M AVERAGE</div>
+        <div class="im-mini-val" id="im-avg3m2">183.1</div>
+      </div>
+      <div class="im-mini-stat">
+        <div class="im-mini-label">UNIT</div>
+        <div class="im-mini-val" style="color:var(--silver)">IMM-MI</div>
+      </div>
+      <div class="im-mini-stat">
+        <div class="im-mini-label">SOURCE</div>
+        <div class="im-mini-val" style="color:var(--silver)">Procurement Resource</div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="im-tabs">
+      <button id="im-tab-btn-commentary"  class="im-tab active"    onclick="switchImTab('commentary')">📊 Market Commentary</button>
+      <button id="im-tab-btn-supply"      class="im-tab"           onclick="switchImTab('supply')">🏭 Supply</button>
+      <button id="im-tab-btn-demand"      class="im-tab"           onclick="switchImTab('demand')">📈 Demand</button>
+      <button id="im-tab-btn-feedstock"   class="im-tab"           onclick="switchImTab('feedstock')">⛏ Feedstock</button>
+      <button id="im-tab-btn-forecast"    class="im-tab"           onclick="switchImTab('forecast')">◇ Forecast Range</button>
+      <button id="im-tab-btn-pricesummary"class="im-tab"           onclick="switchImTab('pricesummary')">$ Price Summary</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="im-tab-body">
+      <div id="im-tab-content-commentary" style="display:block">
+        <div id="im-tab-commentary" class="im-tab-text"></div>
+      </div>
+      <div id="im-tab-content-supply" style="display:none">
+        <div id="im-tab-supply" class="im-tab-text"></div>
+      </div>
+      <div id="im-tab-content-demand" style="display:none">
+        <div id="im-tab-demand" class="im-tab-text"></div>
+      </div>
+      <div id="im-tab-content-feedstock" style="display:none">
+        <div id="im-tab-feedstock" class="im-tab-text"></div>
+      </div>
+      <div id="im-tab-content-forecast" style="display:none">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:8px 0;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;border-bottom:1px solid var(--border)">Period</th>
+              <th style="text-align:center;padding:8px 8px;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--down);text-transform:uppercase;border-bottom:1px solid var(--border)">Low</th>
+              <th style="text-align:center;padding:8px 8px;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;border-bottom:1px solid var(--border)">Mid (Base)</th>
+              <th style="text-align:center;padding:8px 8px;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--up);text-transform:uppercase;border-bottom:1px solid var(--border)">High</th>
+              <th style="text-align:right;padding:8px 0;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;border-bottom:1px solid var(--border)">Confidence</th>
+            </tr>
+          </thead>
+          <tbody id="im-fc-table"></tbody>
+        </table>
+      </div>
+      <div id="im-tab-content-pricesummary" style="display:none">
+        <div id="im-price-summary"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+/* ── INDEX MODAL STYLES ──────────────────────── */
+.im-overlay {
+  display:none; position:fixed; inset:0; z-index:500;
+  background:rgba(6,13,31,0.85); backdrop-filter:blur(4px);
+  align-items:center; justify-content:center;
+  padding:20px;
+}
+.im-overlay.open { display:flex; animation:fadeIn .2s ease; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+.im-modal {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:14px; width:100%; max-width:900px;
+  max-height:92vh; overflow-y:auto;
+  box-shadow:0 40px 100px rgba(0,0,0,0.7);
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+.im-header {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  padding:20px 24px 16px; border-bottom:1px solid var(--border);
+  position:sticky; top:0; background:var(--bg2); z-index:10;
+}
+.im-title {
+  font-family:var(--font-display); font-size:22px; font-weight:800;
+  letter-spacing:1px; line-height:1;
+}
+.im-subtitle { font-size:12px; color:var(--dim); margin-top:4px; }
+.im-close {
+  background:var(--bg3); border:1px solid var(--border);
+  color:var(--silver); width:32px; height:32px; border-radius:50%;
+  cursor:pointer; font-size:14px; display:flex; align-items:center;
+  justify-content:center; transition:all .15s; flex-shrink:0;
+}
+.im-close:hover { background:var(--down); color:#fff; border-color:var(--down); }
+
+.im-stats-row {
+  display:flex; align-items:center; gap:24px; flex-wrap:wrap;
+  padding:16px 24px; border-bottom:1px solid var(--border);
+  background:var(--bg3);
+}
+.im-stat-group { display:flex; flex-direction:column; gap:4px; }
+.im-stat-label { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--dim); text-transform:uppercase; }
+.im-stat-val { font-family:var(--font-display); font-size:32px; font-weight:800; line-height:1; }
+.im-stat-val2 { font-family:var(--font-mono); font-size:16px; font-weight:700; color:var(--white); }
+
+.im-select {
+  background:var(--bg2); border:1px solid var(--border);
+  color:var(--white); border-radius:6px; padding:6px 10px;
+  font-family:var(--font-body); font-size:12px; cursor:pointer;
+  outline:none;
+}
+.im-select:hover { border-color:var(--gold); }
+
+.im-chart-section { padding:20px 24px; border-bottom:1px solid var(--border); }
+.im-chart-header {
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:10px; margin-bottom:12px;
+}
+.im-section-label {
+  font-size:9px; font-weight:700; letter-spacing:2px;
+  color:var(--gold); text-transform:uppercase;
+  display:flex; align-items:center; gap:8px;
+}
+.im-section-label::after { content:''; width:30px; height:1px; background:var(--border); display:inline-block; }
+
+.im-time-btns { display:flex; gap:2px; background:var(--bg3); border-radius:6px; padding:3px; }
+.im-time-btns button {
+  background:none; border:none; color:var(--dim); font-family:var(--font-body);
+  font-size:12px; font-weight:600; padding:4px 10px; border-radius:4px;
+  cursor:pointer; transition:all .15s;
+}
+.im-time-btns button.active { background:var(--bg2); color:var(--white); }
+.im-time-btns button:hover:not(.active) { color:var(--silver); }
+
+.im-stats-bar {
+  display:flex; gap:0; border-bottom:1px solid var(--border);
+}
+.im-mini-stat {
+  flex:1; padding:14px 20px; border-right:1px solid var(--border);
+  text-align:center;
+}
+.im-mini-stat:last-child { border-right:none; }
+.im-mini-label { font-size:9px; font-weight:700; letter-spacing:1.5px; color:var(--dim); text-transform:uppercase; margin-bottom:4px; }
+.im-mini-val { font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--white); }
+
+.im-tabs {
+  display:flex; gap:0; border-bottom:1px solid var(--border);
+  overflow-x:auto; padding:0 24px;
+}
+.im-tab {
+  background:none; border:none; color:var(--dim); font-family:var(--font-body);
+  font-size:12px; font-weight:600; padding:12px 16px; cursor:pointer;
+  transition:all .15s; border-bottom:2px solid transparent;
+  white-space:nowrap;
+}
+.im-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.im-tab:hover:not(.active) { color:var(--silver); }
+
+.im-tab-body { padding:20px 24px; }
+.im-tab-text { font-size:13px; line-height:1.75; color:var(--silver); }
+.im-tab-text strong { color:var(--gold); }
+</style>
+</body>
+</html>
