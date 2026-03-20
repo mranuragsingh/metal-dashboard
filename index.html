@@ -800,10 +800,7 @@ body {
     <div class="notify-item-title"><strong>Gold</strong> exceeded $2,500 threshold</div>
     <div class="notify-item-time">10 min ago</div>
   </div>
-  <div class="notify-item">
-    <div class="notify-item-title"><strong>JSW Steel Vijayanagar</strong> — Unplanned blast furnace shutdown</div>
-    <div class="notify-item-time">1h ago</div>
-  </div>
+
   <div class="notify-item">
     <div class="notify-item-title"><strong>Lithium Carbonate</strong> fell below $14,000 threshold</div>
     <div class="notify-item-time">2h ago</div>
@@ -843,10 +840,6 @@ body {
     <a class="nav-item" onclick="showPage('news')">
       <span class="nav-icon">▤</span> PR News
       <span class="nav-badge">8</span>
-    </a>
-    <a class="nav-item" onclick="showPage('disruptions')">
-      <span class="nav-icon">⚡</span> Live Disruptions
-      <span class="nav-badge live"><span class="live-dot"></span> LIVE</span>
     </a>
   </div>
   <div class="nav-group">
@@ -898,6 +891,28 @@ body {
           <span style="font-size:13px">⤓</span> Export Report
         </button>
       </div>
+    </div>
+
+    <!-- Track Your Important Materials -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:18px;">⭐</span>
+          <div>
+            <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--white);letter-spacing:.5px;">Track Your Important Materials</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:1px;">8 Active · Real-time price monitoring</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;color:var(--dim);background:var(--bg3);border:1px solid var(--border);padding:3px 10px;border-radius:12px;">8 Active</span>
+          <button class="btn btn-gold" onclick="openTrackManager()" style="font-size:12px;padding:7px 14px;gap:6px;">
+            ⊕ Manage Materials
+          </button>
+        </div>
+      </div>
+
+      <!-- 8 Material Cards — 4 per row -->
+      <div id="trackedMaterialsGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;"></div>
     </div>
 
     <!-- KPI Row -->
@@ -1001,80 +1016,11 @@ body {
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Subscribed Metals</span>
-            <div style="display:flex;gap:6px">
-              <button class="region-pill active">All</button>
-              <button class="region-pill">Asia</button>
-              <button class="region-pill">N. America</button>
-              <button class="region-pill">Europe</button>
-            </div>
-          </div>
-          <div class="card-body" style="padding-top:4px">
-            <div style="display:grid;grid-template-columns:28px 1fr 90px 80px 80px;gap:12px;padding:6px 0 10px;border-bottom:1px solid var(--border)">
-              <span></span>
-              <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-transform:uppercase">Metal</span>
-              <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-align:right;text-transform:uppercase">Price</span>
-              <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-align:right;text-transform:uppercase">MoM</span>
-              <span style="font-size:9px;color:var(--dim);letter-spacing:1.5px;font-weight:700;text-align:right;text-transform:uppercase">Region</span>
-            </div>
-            <div id="metalRows"></div>
-          </div>
-        </div>
+        
       </div>
 
       <!-- Right column -->
       <div style="display:flex;flex-direction:column;gap:16px">
-        <!-- Disruptions -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Live Disruptions</span>
-            <div style="display:flex;align-items:center;gap:8px">
-              <div class="live-dot"></div>
-              <span style="font-size:11px;color:var(--up);font-weight:600">LIVE</span>
-            </div>
-          </div>
-          <div class="card-body" style="padding-top:8px">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
-              <div class="stat-box">
-                <div class="stat-num" style="color:var(--down)">14</div>
-                <div class="stat-lbl">Active</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-num" style="color:var(--flat)">5</div>
-                <div class="stat-lbl">Unplanned</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-num" style="color:var(--up)">9</div>
-                <div class="stat-lbl">Planned</div>
-              </div>
-            </div>
-            <div class="disruption-item high">
-              <div class="dis-header">
-                <span class="dis-name">JSW Steel Vijayanagar</span>
-                <span class="dis-sev sev-high">HIGH</span>
-              </div>
-              <div class="dis-meta">India · Blast Furnace · Unplanned · 1h ago</div>
-            </div>
-            <div class="disruption-item medium">
-              <div class="dis-header">
-                <span class="dis-name">Glencore Mopani Copper</span>
-                <span class="dis-sev sev-medium">MEDIUM</span>
-              </div>
-              <div class="dis-meta">Zambia · Smelter · Planned · 3h ago</div>
-            </div>
-            <div class="disruption-item high">
-              <div class="dis-header">
-                <span class="dis-name">Albemarle Silver Peak</span>
-                <span class="dis-sev sev-high">HIGH</span>
-              </div>
-              <div class="dis-meta">USA · Lithium Mine · Unplanned · 5h ago</div>
-            </div>
-            <button class="btn btn-ghost" style="width:100%;margin-top:10px;justify-content:center" onclick="showPage('disruptions')">View all disruptions →</button>
-          </div>
-        </div>
-
         <!-- Active Alerts -->
         <div class="card">
           <div class="card-header">
@@ -1442,36 +1388,6 @@ body {
   </div>
 </div>
 
-<!-- ══ DISRUPTIONS ═══════════════════════════════ -->
-<div class="page" id="page-disruptions">
-  <div style="padding:24px">
-    <div class="page-header">
-      <div><div class="page-title">Live Supply Disruption Tracker</div><div class="page-sub">Real-time tracking of planned and unplanned metal plant shutdowns worldwide</div></div>
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(0,212,160,.06);border:1px solid rgba(0,212,160,.2);border-radius:8px;">
-        <div class="live-dot"></div>
-        <span style="font-size:12px;color:var(--up);font-weight:600">LIVE · Updates every 6 hours</span>
-      </div>
-    </div>
-    <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-      <div class="stat-box"><div class="stat-num" style="color:var(--down)">14</div><div class="stat-lbl">Active Outages</div></div>
-      <div class="stat-box"><div class="stat-num" style="color:var(--flat)">5</div><div class="stat-lbl">Unplanned</div></div>
-      <div class="stat-box"><div class="stat-num" style="color:var(--up)">9</div><div class="stat-lbl">Planned</div></div>
-      <div class="stat-box"><div class="stat-num" style="color:var(--silver)">3</div><div class="stat-lbl">Restarts Today</div></div>
-    </div>
-    <div class="grid grid-main">
-      <div id="disruptionList"></div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Impact Methodology</span></div>
-        <div class="card-body" style="font-size:12px;line-height:1.7;color:var(--silver)">
-          <div style="margin-bottom:12px"><strong style="color:var(--down)">HIGH (8–12 pts)</strong><br>Large capacity (&gt;1M t/y), unplanned, cracker/smelter, extended duration</div>
-          <div style="margin-bottom:12px"><strong style="color:var(--flat)">MEDIUM (5–7 pts)</strong><br>Mid-size capacity (300K–1M t/y), planned turnaround in key region</div>
-          <div><strong style="color:var(--up)">LOW (1–4 pts)</strong><br>Small capacity (&lt;300K t/y), planned, short duration, surplus market</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ══ ALERTS ════════════════════════════════════ -->
 <div class="page" id="page-alerts">
   <div style="padding:24px">
@@ -1576,16 +1492,7 @@ const metals = [
 
 const catColors = { fer:"#4F46E5", nfe:"#6366F1", pre:"#8B5CF6", ene:"#4F46E5" };
 
-const disruptions = [
-  { name:"JSW Steel Vijayanagar", loc:"India · Blast Furnace", type:"Unplanned", time:"1h ago", sev:"high", metal:"HRC / Rebar" },
-  { name:"Glencore Mopani Copper", loc:"Zambia · Copper Smelter", type:"Planned", time:"3h ago", sev:"medium", metal:"Copper" },
-  { name:"Albemarle Silver Peak", loc:"USA · Lithium Mine", type:"Unplanned", time:"5h ago", sev:"high", metal:"Lithium Carb." },
-  { name:"Norilsk Nickel Kola", loc:"Russia · Nickel Refinery", type:"Planned", time:"8h ago", sev:"high", metal:"Nickel" },
-  { name:"Tata Steel Port Talbot", loc:"UK · BF-BOF Complex", type:"Planned", time:"12h ago", sev:"medium", metal:"HRC / CRC" },
-  { name:"Codelco Andina", loc:"Chile · Copper Mine", type:"Unplanned", time:"1d ago", sev:"high", metal:"Copper" },
-  { name:"RUSAL Krasnoyarsk", loc:"Russia · Al Smelter", type:"Planned", time:"1d ago", sev:"medium", metal:"Aluminium" },
-  { name:"Vale Carajas Iron Ore", loc:"Brazil · Iron Ore Mine", type:"Low impact", time:"2d ago", sev:"low", metal:"Iron Ore" },
-];
+
 
 const newsItems = [
   { tag:"fer", tagLabel:"Ferrous", title:"Indian structural steel prices rise 2.3% MoM as JSW Steel targets 50% capacity expansion with ₹2 lakh crore investment", time:"25 min ago", views:"4.2k" },
@@ -1834,21 +1741,7 @@ function switchHeatmap(tab, btn) { setHmTime(tab, btn); }
 // Initial render
 renderHeatmap();
 
-// Metal rows
-const rowContainer = document.getElementById('metalRows');
-metals.slice(0,8).forEach(m=>{
-  const mom = parseFloat(m.mom);
-  const c = mom>0?'var(--up)':mom<0?'var(--down)':'var(--flat)';
-  const arrow = mom>0?'▲':mom<0?'▼':'→';
-  rowContainer.innerHTML += `
-    <div class="metal-row">
-      <div><div class="metal-dot" style="background:${catColors[m.cat]}"></div></div>
-      <div><div class="metal-name">${m.name}</div><div class="metal-cat">${m.catLabel}</div></div>
-      <div class="metal-price">${m.price} <span style="font-size:10px;color:var(--dim)">${m.unit}</span></div>
-      <div class="metal-mom" style="color:${c}">${arrow} ${m.mom}%</div>
-      <div class="metal-region">${m.region}</div>
-    </div>`;
-});
+
 
 // Product catalog
 function buildCatalog(filter){
@@ -1876,19 +1769,7 @@ function filterCatalog(cat, el){
   buildCatalog(cat);
 }
 
-// Disruptions
-const disList = document.getElementById('disruptionList');
-if(disList) disruptions.forEach(d=>{
-  const sc = d.sev==='high'?'sev-high':d.sev==='medium'?'sev-medium':'sev-low';
-  disList.innerHTML += `<div class="disruption-item ${d.sev}" style="margin-bottom:10px">
-    <div class="dis-header">
-      <span class="dis-name">${d.name}</span>
-      <span class="dis-sev ${sc}">${d.sev.toUpperCase()}</span>
-    </div>
-    <div class="dis-meta">${d.loc} · ${d.type} · ${d.time}</div>
-    <div style="font-size:11px;color:var(--gold);margin-top:4px">Affected: ${d.metal}</div>
-  </div>`;
-});
+
 
 // News
 const newsGrid = document.getElementById('newsGrid');
@@ -2017,8 +1898,8 @@ function toggleSidebar() {
 const dashSections = [
   { id:'kpi-row',    label:'Index KPI Cards',       icon:'⬛', on:true },
   { id:'heatmap',    label:'Price Heatmap',          icon:'◈', on:true },
-  { id:'metal-table',label:'Subscribed Metals Table',icon:'▤', on:true },
-  { id:'disruptions',label:'Live Disruptions',       icon:'⚡', on:true },
+  { id:'trackedMaterialsGrid',label:'Track Your Important Materials',icon:'⭐', on:true },
+  
   { id:'alerts-home',label:'Active Alerts',          icon:'🔔', on:true },
   { id:'news-home',  label:'Latest News',            icon:'📰', on:true },
   { id:'forecast-home',label:'Forecast Report',      icon:'◇', on:true },
@@ -2159,6 +2040,323 @@ function downloadIndexExcel() {
   a.download = name.replace(/ /g,'_') + '_2021_to_2026.csv';
   a.click();
   URL.revokeObjectURL(url);
+}
+
+
+// ── Track Your Important Materials ───────────
+const allTrackableMaterials = [
+  // Ferrous
+  { id:"hrc",   name:"Hot Rolled Coil", short:"HRC",   cat:"Ferrous",      price:"638",    unit:"$/MT", mom:"+1.9", regions:["Asia","Europe","N. America"] },
+  { id:"crc",   name:"Cold Rolled Coil",short:"CRC",   cat:"Ferrous",      price:"688",    unit:"$/MT", mom:"+1.7", regions:["Asia","Europe","N. America"] },
+  { id:"rebar", name:"Rebar (TMT)",     short:"Rebar", cat:"Ferrous",      price:"565",    unit:"$/MT", mom:"+3.1", regions:["Asia","Europe","N. America"] },
+  { id:"wirod", name:"Wire Rod",        short:"Wire Rod",cat:"Ferrous",     price:"578",    unit:"$/MT", mom:"+2.8", regions:["Asia","Europe","N. America"] },
+  { id:"mbar",  name:"Merchant Bar",   short:"M. Bar", cat:"Ferrous",      price:"545",    unit:"$/MT", mom:"+2.2", regions:["Asia","Europe","N. America"] },
+  { id:"mspl",  name:"MS Plate",       short:"MS Plate",cat:"Ferrous",     price:"595",    unit:"$/MT", mom:"+3.0", regions:["Asia","Europe","N. America"] },
+  { id:"ss",    name:"Stainless Steel",short:"S. Steel",cat:"Ferrous",     price:"2,180",  unit:"$/MT", mom:"+1.1", regions:["Asia","Europe","N. America"] },
+  { id:"beam",  name:"Struct. Beams",  short:"Beams",  cat:"Ferrous",      price:"572",    unit:"$/MT", mom:"+2.5", regions:["Asia","Europe","N. America"] },
+  { id:"angl",  name:"Angles",         short:"Angles", cat:"Ferrous",      price:"555",    unit:"$/MT", mom:"+2.0", regions:["Asia","Europe","N. America"] },
+  // Non-Ferrous
+  { id:"alum",  name:"Aluminium",      short:"Alum",   cat:"Non-Ferrous",  price:"2,490",  unit:"$/MT", mom:"+0.8", regions:["LME","Asia","Europe","N. America"] },
+  { id:"copp",  name:"Copper",         short:"Copper", cat:"Non-Ferrous",  price:"9,690",  unit:"$/MT", mom:"+1.2", regions:["LME","Asia","Europe","N. America"] },
+  { id:"zinc",  name:"Zinc",           short:"Zinc",   cat:"Non-Ferrous",  price:"2,810",  unit:"$/MT", mom:"+0.7", regions:["LME","Asia","Europe","N. America"] },
+  { id:"lead",  name:"Lead",           short:"Lead",   cat:"Non-Ferrous",  price:"2,160",  unit:"$/MT", mom:"+0.5", regions:["LME","Asia","Europe","N. America"] },
+  // Precious
+  { id:"gold",  name:"Gold",           short:"Gold",   cat:"Precious",     price:"2,490",  unit:"$/oz", mom:"+3.8", regions:["Global","LBMA","COMEX"] },
+  { id:"silv",  name:"Silver",         short:"Silver", cat:"Precious",     price:"29.20",  unit:"$/oz", mom:"+4.1", regions:["Global","LBMA","COMEX"] },
+  { id:"plat",  name:"Platinum",       short:"Plat.",  cat:"Precious",     price:"1,010",  unit:"$/oz", mom:"+2.6", regions:["Global","LBMA","COMEX"] },
+  { id:"pall",  name:"Palladium",      short:"Pall.",  cat:"Precious",     price:"1,080",  unit:"$/oz", mom:"+2.9", regions:["Global","LBMA","COMEX"] },
+  // Energy Transition
+  { id:"nick",  name:"Nickel",         short:"Nickel", cat:"Energy Trans.",price:"18,900", unit:"$/MT", mom:"+1.6", regions:["LME","Asia"] },
+  { id:"lith",  name:"Lithium Carb.",  short:"Lithium",cat:"Energy Trans.",price:"13,700", unit:"$/MT", mom:"-2.1", regions:["China","Global"] },
+  { id:"coba",  name:"Cobalt",         short:"Cobalt", cat:"Energy Trans.",price:"26,800", unit:"$/MT", mom:"-1.8", regions:["LME","Global"] },
+  { id:"mang",  name:"Manganese",      short:"Mangan.",cat:"Energy Trans.",price:"4,400",  unit:"$/MT", mom:"+0.5", regions:["Global"] },
+  { id:"chro",  name:"Chromium",       short:"Chrom.", cat:"Energy Trans.",price:"9,200",  unit:"$/MT", mom:"+0.3", regions:["Global"] },
+  { id:"tita",  name:"Titanium",       short:"Titani.",cat:"Energy Trans.",price:"11,500", unit:"$/MT", mom:"+0.8", regions:["Global"] },
+  { id:"tung",  name:"Tungsten",       short:"Tungst.",cat:"Energy Trans.",price:"35,000", unit:"$/MT", mom:"+0.4", regions:["Global"] },
+  { id:"tin",   name:"Tin",            short:"Tin",    cat:"Energy Trans.",price:"28,500", unit:"$/MT", mom:"+0.4", regions:["LME","Global"] },
+  { id:"vana",  name:"Vanadium",       short:"Vanad.", cat:"Energy Trans.",price:"31,000", unit:"$/MT", mom:"-0.6", regions:["Global"] },
+  { id:"moly",  name:"Molybdenum",     short:"Molyb.", cat:"Energy Trans.",price:"42,000", unit:"$/MT", mom:"+0.9", regions:["Global"] },
+];
+
+// Default 8 tracked: 2 per category
+let trackedList = [
+  { id:"hrc",  region:"Asia" },
+  { id:"rebar",region:"Asia" },
+  { id:"copp", region:"LME" },
+  { id:"alum", region:"LME" },
+  { id:"gold", region:"Global" },
+  { id:"silv", region:"Global" },
+  { id:"nick", region:"LME" },
+  { id:"lith", region:"China" },
+];
+
+const trackCatColors = { "Ferrous":"var(--fer)", "Non-Ferrous":"var(--nfe)", "Precious":"var(--pre)", "Energy Trans.":"var(--ene)" };
+const trackCatBg = { "Ferrous":"rgba(124,58,237,.08)", "Non-Ferrous":"rgba(99,102,241,.08)", "Precious":"rgba(139,92,246,.08)", "Energy Trans.":"rgba(79,70,229,.08)" };
+
+function getMaterialById(id) {
+  return allTrackableMaterials.find(m => m.id === id);
+}
+
+// Sparkline SVG generator
+function sparklineSVG(mom, color) {
+  const up = !mom.startsWith('-');
+  const pts = up
+    ? "0,28 20,24 40,22 60,20 80,18 100,16 120,14 140,12 160,10"
+    : "0,10 20,12 40,14 60,16 80,18 100,20 120,22 140,24 160,28";
+  const fill = up
+    ? "0,28 20,24 40,22 60,20 80,18 100,16 120,14 140,12 160,10 160,32 0,32"
+    : "0,10 20,12 40,14 60,16 80,18 100,20 120,22 140,24 160,28 160,32 0,32";
+  const stroke = up ? "#10B981" : "#EF4444";
+  const fillClr = up ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.15)";
+  return `<svg width="100%" height="40" viewBox="0 0 160 32" preserveAspectRatio="none">
+    <polygon points="${fill}" fill="${fillClr}"/>
+    <polyline points="${pts}" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function renderTrackedMaterials() {
+  const grid = document.getElementById('trackedMaterialsGrid');
+  if(!grid) return;
+  grid.innerHTML = trackedList.map(t => {
+    const m = getMaterialById(t.id);
+    if(!m) return '';
+    const up = !m.mom.startsWith('-');
+    const chgColor = up ? 'var(--up)' : 'var(--down)';
+    const arrow = up ? '▲' : '▼';
+    const cc = trackCatColors[m.cat] || 'var(--gold)';
+    return `<div onclick="openMaterialModal('${t.id}','${t.region}')" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;"
+      onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${cc};"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--white);">${m.name}</div>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:2px;">
+            <span style="font-size:9px;font-weight:700;color:${cc};background:${trackCatBg[m.cat]};padding:1px 6px;border-radius:3px;">${m.cat}</span>
+            <span style="font-size:9px;color:var(--dim);">· ${t.region}</span>
+          </div>
+        </div>
+        <button onclick="removeTracked('${t.id}')" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:0;line-height:1;"
+          onmouseover="this.style.color='var(--down)'" onmouseout="this.style.color='var(--dim)'">✕</button>
+      </div>
+      <div style="font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--white);line-height:1;margin-bottom:3px;">${m.price} <span style="font-size:12px;color:var(--dim);font-weight:400;">${m.unit}</span></div>
+      <div style="display:flex;align-items:center;gap:4px;margin-bottom:8px;">
+        <span style="font-size:11px;font-weight:700;color:${chgColor};">${arrow} ${m.mom}%</span>
+        <span style="font-size:10px;color:var(--dim);">vs last week</span>
+      </div>
+      ${sparklineSVG(m.mom, chgColor)}
+    </div>`;
+  }).join('');
+}
+
+function removeTracked(id) {
+  trackedList = trackedList.filter(t => t.id !== id);
+  renderTrackedMaterials();
+}
+
+function openTrackManager() {
+  document.getElementById('trackManagerPanel').style.display = 'flex';
+  renderTrackManagerList();
+}
+
+function closeTrackManager() {
+  document.getElementById('trackManagerPanel').style.display = 'none';
+}
+
+function renderTrackManagerList() {
+  const list = document.getElementById('tmMaterialList');
+  if(!list) return;
+  const cats = ['Ferrous','Non-Ferrous','Precious','Energy Trans.'];
+  list.innerHTML = cats.map(cat => {
+    const catMetals = allTrackableMaterials.filter(m => m.cat === cat);
+    return `<div style="margin-bottom:14px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:${trackCatColors[cat]};text-transform:uppercase;margin-bottom:8px;">${cat}</div>
+      ${catMetals.map(m => {
+        const isTracked = trackedList.some(t => t.id === m.id);
+        const trackedEntry = trackedList.find(t => t.id === m.id);
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:6px;background:${isTracked?'rgba(124,58,237,.08)':'var(--bg3)'};border:1px solid ${isTracked?'rgba(124,58,237,.25)':'var(--border)'};margin-bottom:5px;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--white);">${m.name}</div>
+            ${isTracked ? `<div style="font-size:10px;color:var(--dim);margin-top:1px;">Region: ${trackedEntry.region}</div>` : ''}
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            ${isTracked ? `
+              <select onchange="updateTrackedRegion('${m.id}',this.value)" style="background:var(--bg2);border:1px solid var(--border);color:var(--white);border-radius:4px;padding:3px 6px;font-size:10px;outline:none;">
+                ${m.regions.map(r => `<option value="${r}" ${trackedEntry.region===r?'selected':''}>${r}</option>`).join('')}
+              </select>
+              <button onclick="removeTracked('${m.id}');renderTrackManagerList();" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--down);border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;">Remove</button>
+            ` : `
+              <select id="sel-${m.id}" style="background:var(--bg2);border:1px solid var(--border);color:var(--white);border-radius:4px;padding:3px 6px;font-size:10px;outline:none;">
+                ${m.regions.map(r => `<option value="${r}">${r}</option>`).join('')}
+              </select>
+              <button onclick="addTracked('${m.id}')" style="background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);color:var(--gold);border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;">+ Add</button>
+            `}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function addTracked(id) {
+  if(trackedList.some(t => t.id === id)) return;
+  const sel = document.getElementById('sel-'+id);
+  const region = sel ? sel.value : 'Global';
+  trackedList.push({ id, region });
+  renderTrackedMaterials();
+  renderTrackManagerList();
+}
+
+function updateTrackedRegion(id, region) {
+  const entry = trackedList.find(t => t.id === id);
+  if(entry) { entry.region = region; renderTrackedMaterials(); }
+}
+
+// Initial render — defer to ensure DOM is ready
+if(document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", renderTrackedMaterials);
+} else {
+  renderTrackedMaterials();
+}
+
+
+// ── Material Detail Modal ─────────────────────
+function openMaterialModal(id, region) {
+  const m = getMaterialById(id);
+  if(!m) return;
+
+  const up = !m.mom.startsWith('-');
+  const chgColor = up ? 'var(--up)' : 'var(--down)';
+  const arrow = up ? '▲' : '▼';
+  const cc = trackCatColors[m.cat] || 'var(--gold)';
+
+  // Populate modal fields
+  try {
+    document.getElementById('mm-title').textContent = m.name;
+    document.getElementById('mm-title').style.color = cc;
+    document.getElementById('mm-sub').textContent = 'Spot Price · ' + m.unit;
+    document.getElementById('mm-price').textContent = m.price;
+    document.getElementById('mm-change').textContent = arrow + ' ' + m.mom + '%';
+    document.getElementById('mm-change').style.color = chgColor;
+    document.getElementById('mm-avg3m').textContent = m.price;
+
+    // Region select
+    const rSel = document.getElementById('mm-region');
+    if(rSel) rSel.innerHTML = m.regions.map(r => `<option ${r===region?'selected':''}>${r}</option>`).join('');
+
+    // 52W stats
+    const priceNum = parseFloat(m.price.replace(/,/g,''));
+    document.getElementById('mm-52h').textContent = (priceNum * 1.075).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    document.getElementById('mm-52l').textContent = (priceNum * 0.82).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    document.getElementById('mm-3mavg').textContent = (priceNum * 0.963).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+
+    // Commentary tabs content
+    document.getElementById('mm-cnt-commentary').innerHTML = `${m.name} prices ${up?'rose':'fell'} <strong style="color:${chgColor}">${arrow} ${m.mom}% MoM</strong> driven by supply-demand dynamics in the ${region} region. Market participants note continued price ${up?'support from strong demand and constrained supply':'pressure from elevated inventory levels and softening demand'}.`;
+    document.getElementById('mm-cnt-supply').innerHTML = `Global supply of ${m.name} remains ${up?'tight':'elevated'} with key producers ${up?'operating near capacity limits':'running at above-normal output levels'}. Regional availability in ${region} reflects broader ${up?'tightness':'surplus'} in the seaborne market.`;
+    document.getElementById('mm-cnt-demand').innerHTML = `Demand for ${m.name} in ${region} is ${up?'strong, supported by':'subdued, constrained by'} downstream consumption in key end-use sectors. ${m.cat === 'Precious' ? 'Investment and safe-haven demand continue to support prices.' : m.cat === 'Ferrous' ? 'Infrastructure and construction activity are key demand drivers.' : 'Industrial and technology sector demand is the primary driver.'}`;
+    document.getElementById('mm-cnt-feedstock').innerHTML = `Feedstock and raw material costs for ${m.name} production have been ${up?'rising, contributing to higher output costs and firmer prices':'moderating, though this has not yet fully translated into lower market prices'}.`;
+
+    // Price summary
+    document.getElementById('mm-ps-current').textContent = m.price;
+    document.getElementById('mm-ps-3m').textContent = (priceNum * 0.963).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    document.getElementById('mm-ps-6m').textContent = (priceNum * 0.91).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    document.getElementById('mm-ps-3m-chg').textContent = '+3.9%';
+    document.getElementById('mm-ps-6m-chg').textContent = '+9.9%';
+
+    // Store for full page view
+    window._currentMaterial = { id, region, m };
+
+    // Switch to commentary tab
+    switchMmTab('commentary');
+  } catch(e) { console.warn(e); }
+
+  document.getElementById('materialModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMaterialModal() {
+  document.getElementById('materialModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function switchMmTab(tab) {
+  ['commentary','supply','demand','feedstock'].forEach(t => {
+    const btn = document.getElementById('mm-tab-'+t);
+    const cnt = document.getElementById('mm-cnt-'+t);
+    if(btn) {
+      btn.style.borderBottom = t===tab ? '2px solid var(--gold)' : '2px solid transparent';
+      btn.style.color = t===tab ? 'var(--gold)' : 'var(--dim)';
+      btn.style.fontWeight = t===tab ? '700' : '500';
+    }
+    if(cnt) cnt.style.display = t===tab ? 'block' : 'none';
+  });
+}
+
+function openFullMaterialView() {
+  const cur = window._currentMaterial;
+  if(!cur) return;
+  closeMaterialModal();
+  try {
+    document.getElementById('materialFullPage').style.display = 'block';
+    renderFullMaterialPage(cur.id, cur.region);
+    // Scroll to top
+    document.getElementById('materialFullPage').scrollTop = 0;
+  } catch(e) { console.warn('openFullMaterialView error:', e); }
+}
+
+function closeFullMaterialView() {
+  try {
+    document.getElementById('materialFullPage').style.display = 'none';
+  } catch(e) {}
+}
+
+function renderFullMaterialPage(id, region) {
+  const m = getMaterialById(id);
+  if(!m) return;
+  const up = !m.mom.startsWith('-');
+  const chgColor = up ? 'var(--up)' : 'var(--down)';
+  const arrow = up ? '▲' : '▼';
+  const cc = trackCatColors[m.cat] || 'var(--gold)';
+  const priceNum = parseFloat(m.price.replace(/,/g,''));
+
+  document.getElementById('mfp-title').textContent = m.name;
+  document.getElementById('mfp-title').style.color = cc;
+  document.getElementById('mfp-sub').textContent = 'Spot Price · ' + m.unit;
+  document.getElementById('mfp-region').innerHTML = m.regions.map(r=>`<option ${r===region?'selected':''}>${r}</option>`).join('');
+  document.getElementById('mfp-country').innerHTML = '<option>All Countries</option>';
+  document.getElementById('mfp-price').textContent = m.price;
+  document.getElementById('mfp-change').innerHTML = `<span style="color:${chgColor}">${arrow} ${m.mom}%</span>`;
+  document.getElementById('mfp-52h').textContent = (priceNum*1.075).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  document.getElementById('mfp-52l').textContent = (priceNum*0.82).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  document.getElementById('mfp-3mavg').textContent = (priceNum*0.963).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+
+  // Commentary
+  document.getElementById('mfp-commentary').innerHTML = `${m.name} prices ${up?'rose':'fell'} <strong style="color:${chgColor}">${arrow} ${m.mom}% MoM</strong>. Market participants note continued ${up?'support from strong demand':'pressure from elevated inventory'}. Regional supply in ${region} reflects broader seaborne market ${up?'tightness':'surplus'}.`;
+  document.getElementById('mfp-supply').innerHTML = `Global supply of ${m.name} remains ${up?'tight with key producers near capacity':'elevated with above-normal output'}. Availability in ${region} reflects ${up?'constrained seaborne supply':'surplus conditions'}.`;
+  document.getElementById('mfp-demand').innerHTML = `Demand for ${m.name} in ${region} is ${up?'strong, supported by downstream consumption':'subdued, constrained by weak industrial activity'}.`;
+  document.getElementById('mfp-feedstock').innerHTML = `Raw material costs for ${m.name} have been ${up?'rising, supporting firmer prices':'moderating, adding downward pressure'}.`;
+
+  // Price summary
+  document.getElementById('mfp-ps-current').textContent = m.price;
+  document.getElementById('mfp-ps-3m').textContent = (priceNum*0.963).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  document.getElementById('mfp-ps-6m').textContent = (priceNum*0.91).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+
+  switchMfpTab('commentary');
+}
+
+function switchMfpTab(tab) {
+  ['commentary','supply','demand','feedstock'].forEach(t => {
+    try {
+      const btn = document.getElementById('mfp-tab-'+t);
+      const cnt = document.getElementById('mfp-cnt-'+t);
+      if(btn) {
+        btn.style.borderBottom = t===tab ? '2px solid var(--gold)' : '2px solid transparent';
+        btn.style.color = t===tab ? 'var(--gold)' : 'var(--dim)';
+        btn.style.fontWeight = t===tab ? '700' : '500';
+      }
+      if(cnt) cnt.style.display = t===tab ? 'block' : 'none';
+    } catch(e) {}
+  });
 }
 
 // ── Index Modal ───────────────────────────────────────────────
@@ -2711,6 +2909,414 @@ function setImTimeRange(btn, range) {
 .toggle-slider::before { content:'';position:absolute;width:14px;height:14px;left:3px;bottom:3px;background:var(--dim);border-radius:50%;transition:.3s; }
 .toggle-switch input:checked + .toggle-slider { background:var(--gold); }
 .toggle-switch input:checked + .toggle-slider::before { transform:translateX(18px);background:#fff; }
+</style>
+
+
+<!-- ── TRACK MANAGER PANEL ───────────────────── -->
+<div id="trackManagerPanel" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(8,10,18,0.7);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:620px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:slideUp .25s ease;">
+    <!-- Header -->
+    <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div>
+        <div style="font-family:var(--font-display);font-size:18px;font-weight:800;letter-spacing:1px;color:var(--white);">Manage Tracked Materials</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:2px;">Select materials and choose region · <span style="color:var(--gold);" id="trackedCount">8 tracked</span></div>
+      </div>
+      <button onclick="closeTrackManager()" style="background:var(--bg3);border:1px solid var(--border);color:var(--silver);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <!-- Search -->
+    <div style="padding:12px 22px;border-bottom:1px solid var(--border);flex-shrink:0;">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;padding:0 12px;gap:8px;">
+        <span style="color:var(--dim);">⌕</span>
+        <input type="text" placeholder="Search materials..." oninput="filterTmList(this.value)"
+          style="background:none;border:none;outline:none;color:var(--white);font-family:var(--font-body);font-size:13px;padding:8px 0;width:100%;">
+      </div>
+    </div>
+    <!-- List -->
+    <div id="tmMaterialList" style="overflow-y:auto;padding:16px 22px;flex:1;"></div>
+    <!-- Footer -->
+    <div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+      <span style="font-size:12px;color:var(--dim);">Changes apply instantly to dashboard</span>
+      <button class="btn btn-gold" onclick="closeTrackManager()" style="padding:8px 20px;">✓ Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function filterTmList(q) {
+  const items = document.querySelectorAll('#tmMaterialList > div > div:not(:first-child)');
+  items.forEach(item => {
+    item.style.display = item.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+</script>
+
+
+<!-- ── MATERIAL DETAIL MODAL (Image 1 style) ─────── -->
+<div id="materialModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(8,10,18,0.82);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeMaterialModal()">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:860px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:slideUp .25s ease;">
+
+    <!-- Header -->
+    <div style="padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:10;">
+      <div>
+        <div id="mm-title" style="font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:1px;"></div>
+        <div id="mm-sub" style="font-size:12px;color:var(--dim);margin-top:3px;"></div>
+      </div>
+      <button onclick="closeMaterialModal()" style="background:var(--bg3);border:1px solid var(--border);color:var(--silver);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+
+    <!-- Stats Row -->
+    <div style="display:flex;align-items:center;gap:20px;padding:14px 22px;border-bottom:1px solid var(--border);background:var(--bg3);flex-wrap:wrap;">
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;">CURRENT PRICE</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-top:3px;">
+          <span id="mm-price" style="font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--gold);"></span>
+          <span id="mm-change" style="font-size:14px;font-weight:700;padding:3px 10px;background:rgba(16,185,129,.1);border-radius:4px;"></span>
+        </div>
+      </div>
+      <div style="width:1px;height:40px;background:var(--border);"></div>
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;">AVG (3M)</div>
+        <div id="mm-avg3m" style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--white);margin-top:3px;"></div>
+      </div>
+      <div style="width:1px;height:40px;background:var(--border);"></div>
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;">REGION</div>
+        <select id="mm-region" style="background:var(--bg2);border:1px solid var(--border);color:var(--white);border-radius:6px;padding:6px 10px;font-size:12px;margin-top:3px;outline:none;"></select>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;">COUNTRY</div>
+        <select style="background:var(--bg2);border:1px solid var(--border);color:var(--white);border-radius:6px;padding:6px 10px;font-size:12px;margin-top:3px;outline:none;"><option>All Countries</option></select>
+      </div>
+    </div>
+
+    <!-- Pricing Data Header -->
+    <div style="padding:14px 22px 10px;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:6px;">
+          PRICING DATA <span style="display:inline-block;width:30px;height:1px;background:var(--border);"></span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <div style="display:flex;background:var(--bg3);border-radius:6px;padding:3px;border:1px solid var(--border);">
+            <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:var(--bg2);color:var(--white);font-family:var(--font-body);">3M</button>
+            <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">6M</button>
+            <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">1Y</button>
+            <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">3Y</button>
+            <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">5Y</button>
+            <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">Max</button>
+          </div>
+          <button class="btn btn-ghost" style="font-size:11px;padding:5px 12px;">+ Compare</button>
+          <button class="btn btn-ghost" style="font-size:11px;padding:5px 12px;">⤓ Export</button>
+          <button class="btn btn-ghost" style="font-size:11px;padding:5px 12px;">🔔 Set Alert</button>
+          <button class="btn btn-ghost" style="font-size:11px;padding:5px 12px;">📌 My Charts</button>
+        </div>
+      </div>
+
+      <!-- Chart Legend -->
+      <div style="display:flex;gap:16px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);">
+          <svg width="24" height="4"><line x1="0" y1="2" x2="24" y2="2" stroke="var(--gold)" stroke-width="2.5"/></svg> Historical
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);">
+          <svg width="24" height="4"><line x1="0" y1="2" x2="24" y2="2" stroke="var(--gold)" stroke-width="2" stroke-dasharray="4,2"/></svg> Forecast
+        </div>
+      </div>
+
+      <!-- 2-col: Chart + Stats -->
+      <div style="display:grid;grid-template-columns:1fr 170px;gap:14px;align-items:start;">
+        <!-- Chart -->
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 6px 4px;">
+          <svg width="100%" height="160" viewBox="0 0 1000 220" preserveAspectRatio="none">
+            <!-- Grid -->
+            <line x1="50" y1="20" x2="980" y2="20" stroke="#374151" stroke-width="0.7" stroke-dasharray="4,3"/>
+            <line x1="50" y1="68" x2="980" y2="68" stroke="#374151" stroke-width="0.7" stroke-dasharray="4,3"/>
+            <line x1="50" y1="116" x2="980" y2="116" stroke="#374151" stroke-width="0.7" stroke-dasharray="4,3"/>
+            <line x1="50" y1="164" x2="980" y2="164" stroke="#374151" stroke-width="0.7" stroke-dasharray="4,3"/>
+            <!-- Y axis -->
+            <line x1="50" y1="8" x2="50" y2="170" stroke="#6B7280" stroke-width="1"/>
+            <line x1="50" y1="168" x2="980" y2="168" stroke="#6B7280" stroke-width="1"/>
+            <!-- Historical line (Jan-Mar rising) -->
+            <polyline points="50,150 283,120 517,85" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="50,150 283,120 517,85 517,168 50,168" fill="var(--gold)" opacity="0.08"/>
+            <!-- Dots -->
+            <circle cx="50"  cy="150" r="4" fill="var(--gold)" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="283" cy="120" r="4" fill="var(--gold)" stroke="var(--bg3)" stroke-width="1.5"/>
+            <circle cx="517" cy="85"  r="5" fill="var(--gold)" stroke="var(--bg3)" stroke-width="2"/>
+            <!-- Forecast divider -->
+            <line x1="517" y1="8" x2="517" y2="170" stroke="#374151" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="522" y="20" fill="#6B7280" font-size="11" font-family="Barlow">FORECAST →</text>
+            <!-- Forecast dashed -->
+            <polyline points="517,85 650,78 783,72 917,67 980,64" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="6,3"/>
+            <polygon points="517,85 650,76 783,68 917,62 980,58 980,80 917,84 783,88 650,92 517,85" fill="var(--gold)" opacity="0.07"/>
+            <!-- X labels -->
+            <text x="50"  y="185" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Jan</text>
+            <text x="283" y="185" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Feb</text>
+            <text x="517" y="185" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Mar</text>
+            <text x="650" y="185" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Apr</text>
+            <text x="783" y="185" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">May</text>
+            <text x="917" y="185" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Jun</text>
+          </svg>
+        </div>
+
+        <!-- Right Stats -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px 14px;">
+            <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;">52W HIGH</div>
+            <div id="mm-52h" style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--up);"></div>
+          </div>
+          <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:12px 14px;">
+            <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;">52W LOW</div>
+            <div id="mm-52l" style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--down);"></div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
+            <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;">3M AVERAGE</div>
+            <div id="mm-3mavg" style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--white);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Forecast Range -->
+      <div style="margin-top:12px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+          FORECAST RANGE <span style="display:inline-block;width:30px;height:1px;background:var(--border);"></span>
+        </div>
+        <div style="display:flex;gap:2px;background:var(--bg3);border-radius:6px;padding:3px;border:1px solid var(--border);display:inline-flex;">
+          <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:var(--bg2);color:var(--white);font-family:var(--font-body);">3M</button>
+          <button onclick="openForecastPaywall('6M')" style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">6M 🔒</button>
+          <button onclick="openForecastPaywall('1Y')" style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">1Y 🔒</button>
+          <button onclick="openForecastPaywall('2Y')" style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">2Y 🔒</button>
+        </div>
+      </div>
+
+      <!-- View Full Details -->
+      <div style="text-align:center;margin-top:14px;">
+        <button class="btn btn-gold" style="padding:10px 28px;font-size:13px;" onclick="openFullMaterialView()">⊞ View Full Details</button>
+      </div>
+    </div>
+
+    <!-- Tabs + Commentary -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border);">
+      <!-- Left: Tabs -->
+      <div style="border-right:1px solid var(--border);">
+        <div style="display:flex;gap:0;padding:0 16px;border-bottom:1px solid var(--border);">
+          <button id="mm-tab-commentary" onclick="switchMmTab('commentary')" style="padding:10px 12px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:var(--font-body);border-bottom:2px solid transparent;background:none;letter-spacing:.5px;color:var(--dim);">📊 MARKET COMMENTARY</button>
+          <button id="mm-tab-supply"     onclick="switchMmTab('supply')"     style="padding:10px 12px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:var(--font-body);border-bottom:2px solid transparent;background:none;letter-spacing:.5px;color:var(--dim);">🏭 SUPPLY</button>
+          <button id="mm-tab-demand"     onclick="switchMmTab('demand')"     style="padding:10px 12px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:var(--font-body);border-bottom:2px solid transparent;background:none;letter-spacing:.5px;color:var(--dim);">📈 DEMAND</button>
+          <button id="mm-tab-feedstock"  onclick="switchMmTab('feedstock')"  style="padding:10px 12px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:var(--font-body);border-bottom:2px solid transparent;background:none;letter-spacing:.5px;color:var(--dim);">⛏ FEEDSTOCK</button>
+        </div>
+        <div style="padding:16px;">
+          <div id="mm-cnt-commentary" style="font-size:13px;line-height:1.7;color:var(--silver);"></div>
+          <div id="mm-cnt-supply"     style="display:none;font-size:13px;line-height:1.7;color:var(--silver);"></div>
+          <div id="mm-cnt-demand"     style="display:none;font-size:13px;line-height:1.7;color:var(--silver);"></div>
+          <div id="mm-cnt-feedstock"  style="display:none;font-size:13px;line-height:1.7;color:var(--silver);"></div>
+        </div>
+      </div>
+      <!-- Right: Price Summary -->
+      <div style="padding:16px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:14px;">PRICE SUMMARY</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:14px;border-bottom:2px solid var(--border);">
+          <span style="font-size:14px;color:var(--silver);font-weight:600;">Current Month</span>
+          <span id="mm-ps-current" style="font-family:var(--font-mono);font-size:22px;font-weight:700;color:var(--white);"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:13px;color:var(--dim);">3 Month Avg</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="mm-ps-3m" style="font-family:var(--font-mono);font-size:15px;font-weight:600;color:var(--white);"></span>
+            <span id="mm-ps-3m-chg" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(16,185,129,.1);color:var(--up);"></span>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
+          <span style="font-size:13px;color:var(--dim);">6 Month Avg</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="mm-ps-6m" style="font-family:var(--font-mono);font-size:15px;font-weight:600;color:var(--white);"></span>
+            <span id="mm-ps-6m-chg" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(16,185,129,.1);color:var(--up);"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── MATERIAL FULL PAGE VIEW (Image 2 style) ───── -->
+<div id="materialFullPage" style="display:none;position:fixed;inset:0;background:var(--bg);overflow-y:auto;z-index:400;margin-left:var(--sidebar-w);margin-top:var(--header-h);">
+  <div style="padding:24px;max-width:1200px;">
+    <!-- Back button -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <button onclick="closeFullMaterialView()" class="btn btn-ghost" style="gap:8px;">← Back</button>
+      <button class="btn btn-gold" style="font-size:12px;padding:6px 14px;">⊕ Add to Dashboard</button>
+    </div>
+
+    <!-- Title Row -->
+    <div style="margin-bottom:20px;">
+      <div id="mfp-title" style="font-family:var(--font-display);font-size:28px;font-weight:800;letter-spacing:1px;"></div>
+      <div id="mfp-sub" style="font-size:13px;color:var(--dim);margin-top:4px;"></div>
+    </div>
+
+    <!-- Filters Row -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:center;">
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;">REGION</div>
+        <select id="mfp-region" style="background:var(--bg2);border:1px solid var(--border);color:var(--white);border-radius:6px;padding:7px 12px;font-size:12px;outline:none;min-width:160px;"></select>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;">COUNTRY</div>
+        <select id="mfp-country" style="background:var(--bg2);border:1px solid var(--border);color:var(--white);border-radius:6px;padding:7px 12px;font-size:12px;outline:none;min-width:140px;"></select>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:4px;">CURRENCY</div>
+        <select style="background:var(--bg2);border:1px solid var(--border);color:var(--white);border-radius:6px;padding:7px 12px;font-size:12px;outline:none;">
+          <option>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Main 2-col layout -->
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;">
+      <!-- LEFT: Chart section -->
+      <div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+          <!-- Pricing Data Header -->
+          <div style="padding:14px 18px;border-bottom:1px solid var(--border);">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:6px;">
+                📈 Pricing Data
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+                <div style="display:flex;background:var(--bg3);border-radius:6px;padding:3px;border:1px solid var(--border);">
+                  <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:var(--gold);color:var(--bg);font-family:var(--font-body);">3M</button>
+                  <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">6M</button>
+                  <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">1Y</button>
+                  <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">3Y</button>
+                  <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">5Y</button>
+                  <button onclick="openForecastPaywall('Max')" style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">Max 🔒</button>
+                </div>
+                <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;">+ Compare</button>
+                <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;">📌 My Charts</button>
+              </div>
+            </div>
+            <!-- Legend -->
+            <div style="display:flex;gap:16px;margin-bottom:10px;">
+              <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);">
+                <svg width="20" height="4"><line x1="0" y1="2" x2="20" y2="2" stroke="var(--gold)" stroke-width="2.5"/></svg> Historical
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);">
+                <svg width="20" height="4"><line x1="0" y1="2" x2="20" y2="2" stroke="var(--gold)" stroke-width="2" stroke-dasharray="4,2"/></svg> Forecast
+              </div>
+            </div>
+            <!-- Chart -->
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px;">
+              <svg width="100%" height="220" viewBox="0 0 900 260" preserveAspectRatio="none">
+                <line x1="50" y1="20" x2="880" y2="20" stroke="#374151" stroke-width="0.7" stroke-dasharray="4,3"/>
+                <line x1="50" y1="68" x2="880" y2="68" stroke="#374151" stroke-width="0.7" stroke-dasharray="4,3"/>
+                <line x1="50" y1="116" x2="880" y2="116" stroke="#374151" stroke-width="0.7" stroke-dasharray="4,3"/>
+                <line x1="50" y1="164" x2="880" y2="164" stroke="#374151" stroke-width="0.7" stroke-dasharray="4,3"/>
+                <line x1="50" y1="210" x2="880" y2="210" stroke="#374151" stroke-width="0.7" stroke-dasharray="4,3"/>
+                <line x1="50" y1="8" x2="50" y2="215" stroke="#6B7280" stroke-width="1"/>
+                <line x1="50" y1="210" x2="880" y2="210" stroke="#6B7280" stroke-width="1"/>
+                <!-- Historical -->
+                <polyline points="50,185 283,150 517,110" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"/>
+                <polygon points="50,185 283,150 517,110 517,210 50,210" fill="var(--gold)" opacity="0.07"/>
+                <circle cx="50"  cy="185" r="4" fill="var(--gold)" stroke="var(--bg3)" stroke-width="1.5"/>
+                <circle cx="283" cy="150" r="4" fill="var(--gold)" stroke="var(--bg3)" stroke-width="1.5"/>
+                <circle cx="517" cy="110" r="5" fill="var(--gold)" stroke="var(--bg3)" stroke-width="2"/>
+                <!-- Forecast divider -->
+                <line x1="517" y1="8" x2="517" y2="212" stroke="#374151" stroke-width="1" stroke-dasharray="4,3"/>
+                <text x="522" y="22" fill="#6B7280" font-size="11" font-family="Barlow">FORECAST →</text>
+                <!-- Forecast -->
+                <polyline points="517,110 617,103 717,97 817,90 880,86" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="6,3"/>
+                <polygon points="517,110 617,101 717,93 817,85 880,80 880,100 817,106 717,112 617,118 517,110" fill="var(--gold)" opacity="0.07"/>
+                <!-- X labels -->
+                <text x="50"  y="228" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Jan</text>
+                <text x="283" y="228" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Feb</text>
+                <text x="517" y="228" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Mar</text>
+                <text x="617" y="228" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Apr</text>
+                <text x="717" y="228" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">May</text>
+                <text x="817" y="228" fill="#9CA3AF" font-size="11" font-family="Barlow" text-anchor="middle">Jun</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Forecast Range -->
+          <div style="padding:12px 18px;border-bottom:1px solid var(--border);">
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+              📉 Forecast Range
+            </div>
+            <div style="display:flex;gap:2px;background:var(--bg3);border-radius:6px;padding:3px;border:1px solid var(--border);display:inline-flex;">
+              <button style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:var(--gold);color:var(--bg);font-family:var(--font-body);">3M</button>
+              <button onclick="openForecastPaywall('6M')" style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">6M 🔒</button>
+              <button onclick="openForecastPaywall('1Y')" style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">1Y 🔒</button>
+              <button onclick="openForecastPaywall('2Y')" style="padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:600;background:none;color:var(--dim);font-family:var(--font-body);">2Y 🔒</button>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div style="display:flex;border-bottom:1px solid var(--border);padding:0 14px;">
+            <button id="mfp-tab-commentary" onclick="switchMfpTab('commentary')" class="mfp-tab-active" style="padding:10px 14px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:var(--font-body);border-bottom:2px solid var(--gold);color:var(--gold);background:none;letter-spacing:.5px;">📊 COMMENTARY</button>
+            <button id="mfp-tab-supply"     onclick="switchMfpTab('supply')"     style="padding:10px 14px;border:none;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-body);border-bottom:2px solid transparent;color:var(--dim);background:none;">🏭 SUPPLY</button>
+            <button id="mfp-tab-demand"     onclick="switchMfpTab('demand')"     style="padding:10px 14px;border:none;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-body);border-bottom:2px solid transparent;color:var(--dim);background:none;">📈 DEMAND</button>
+            <button id="mfp-tab-feedstock"  onclick="switchMfpTab('feedstock')"  style="padding:10px 14px;border:none;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-body);border-bottom:2px solid transparent;color:var(--dim);background:none;">⛏ FEEDSTOCK</button>
+          </div>
+          <div style="padding:16px 18px;">
+            <div id="mfp-cnt-commentary" style="font-size:13px;line-height:1.7;color:var(--silver);"></div>
+            <div id="mfp-cnt-supply"     style="display:none;font-size:13px;line-height:1.7;color:var(--silver);"></div>
+            <div id="mfp-cnt-demand"     style="display:none;font-size:13px;line-height:1.7;color:var(--silver);"></div>
+            <div id="mfp-cnt-feedstock"  style="display:none;font-size:13px;line-height:1.7;color:var(--silver);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Stats + Price Summary -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <!-- Current Price Card -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:6px;">CURRENT PRICE</div>
+          <div id="mfp-price" style="font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--gold);"></div>
+          <div id="mfp-change" style="margin-top:4px;font-size:13px;font-weight:700;"></div>
+        </div>
+        <!-- 52W Stats -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;">
+            <div style="font-size:9px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">52W HIGH</div>
+            <div id="mfp-52h" style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--up);"></div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;">
+            <div style="font-size:9px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">52W LOW</div>
+            <div id="mfp-52l" style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--down);"></div>
+          </div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="font-size:9px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">3M AVERAGE</div>
+          <div id="mfp-3mavg" style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--white);"></div>
+        </div>
+        <!-- Price Summary -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:12px;">PRICE SUMMARY</div>
+          <div style="display:flex;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--dim);">Current Month</span>
+            <span id="mfp-ps-current" style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--white);"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:12px;color:var(--dim);">3 Month Avg</span>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span id="mfp-ps-3m" style="font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--white);"></span>
+              <span style="font-size:10px;padding:1px 6px;border-radius:3px;background:rgba(16,185,129,.1);color:var(--up);font-weight:600;">+3.9%</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+            <span style="font-size:12px;color:var(--dim);">6 Month Avg</span>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span id="mfp-ps-6m" style="font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--white);"></span>
+              <span style="font-size:10px;padding:1px 6px;border-radius:3px;background:rgba(16,185,129,.1);color:var(--up);font-weight:600;">+9.9%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.mfp-tab-active { border-bottom: 2px solid var(--gold) !important; color: var(--gold) !important; font-weight: 700 !important; }
 </style>
 
 </body>
