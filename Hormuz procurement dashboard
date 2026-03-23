@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strait of Hormuz — Procurement Risk Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f5f7;
+  --bg2:#ffffff;
+  --bg3:#f0f1f4;
+  --bg4:#e4e6ec;
+  --border:#dde0e8;
+  --border2:#c8ccd8;
+  --text:#1a1d2e;
+  --text2:#4a4f6a;
+  --text3:#8b90a8;
+  --red:#d63030;
+  --orange:#d96b1a;
+  --amber:#b88a00;
+  --green:#1a8f5a;
+  --teal:#1a8f96;
+  --blue:#1a6bbf;
+  --purple:#6b4fd4;
+  --red-bg:#fdeaea;
+  --orange-bg:#fdf0e6;
+  --amber-bg:#fdf7e0;
+  --green-bg:#e6f7ef;
+  --teal-bg:#e6f5f7;
+}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.5;min-height:100vh}
+a{color:var(--blue);text-decoration:none}
+
+/* HEADER */
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:10px;height:10px;background:var(--red);border-radius:50%;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,76,76,.4)}50%{opacity:.8;box-shadow:0 0 0 6px rgba(255,76,76,0)}}
+.logo-text{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text2);letter-spacing:.06em}
+.header-badges{display:flex;gap:8px}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;letter-spacing:.06em;font-weight:600}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(214,48,48,.3)}
+.badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(184,138,0,.3)}
+.header-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3)}
+
+/* CRISIS BANNER */
+.crisis-banner{background:linear-gradient(90deg,rgba(214,48,48,.06) 0%,rgba(217,107,26,.04) 50%,rgba(214,48,48,.06) 100%);border-bottom:1px solid rgba(214,48,48,.18);padding:10px 24px}
+.crisis-banner-inner{max-width:1280px;margin:0 auto;display:flex;gap:32px;align-items:center;flex-wrap:wrap}
+.stat-pill{display:flex;flex-direction:column;align-items:center;gap:2px}
+.stat-pill-label{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.stat-pill-value{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600}
+.stat-pill-value.up{color:var(--red)}
+.stat-pill-value.warn{color:var(--amber)}
+.stat-pill-value.ok{color:var(--green)}
+.divider-v{width:1px;height:36px;background:var(--border2)}
+
+/* TABS */
+.tabs-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:10}
+.tabs-inner{max-width:1280px;margin:0 auto;display:flex;gap:0}
+.tab-btn{background:none;border:none;color:var(--text3);font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:14px 20px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.02em}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--amber);border-bottom-color:var(--amber)}
+
+/* MAIN */
+.main{max-width:1280px;margin:0 auto;padding:24px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* SECTION TITLE */
+.section-title{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.section-subtitle{font-size:12px;color:var(--text2);margin-top:-10px;margin-bottom:16px}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr 1fr}.grid-4{grid-template-columns:1fr 1fr}}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px}
+.card-title{font-size:12px;color:var(--text2);margin-bottom:4px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
+.card-value{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;margin-bottom:2px}
+.card-sub{font-size:11px;color:var(--text3)}
+
+/* CHART WRAPPER */
+.chart-wrap{position:relative;width:100%}
+
+/* RISK MATRIX */
+.risk-card{background:var(--bg3);border-radius:8px;padding:16px;border-left:3px solid var(--border)}
+.risk-card.critical{border-left-color:var(--red);background:rgba(214,48,48,.04)}
+.risk-card.high{border-left-color:var(--orange);background:rgba(217,107,26,.04)}
+.risk-card.moderate{border-left-color:var(--amber);background:rgba(184,138,0,.04)}
+.risk-card.low{border-left-color:var(--green);background:rgba(26,143,90,.04)}
+.risk-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.risk-name{font-size:14px;font-weight:500}
+.risk-badge{font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;padding:2px 8px;border-radius:3px;letter-spacing:.06em}
+.rb-critical{background:var(--red-bg);color:var(--red);border:1px solid rgba(214,48,48,.3)}
+.rb-high{background:var(--orange-bg);color:var(--orange);border:1px solid rgba(217,107,26,.3)}
+.rb-moderate{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(184,138,0,.3)}
+.rb-low{background:var(--green-bg);color:var(--green);border:1px solid rgba(26,143,90,.3)}
+.risk-impact{font-size:13px;font-weight:600;font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
+.risk-impact.up{color:var(--red)}
+.risk-impact.warn{color:var(--orange)}
+.risk-impact.amber{color:var(--amber)}
+.risk-items{list-style:none;padding:0}
+.risk-items li{font-size:12px;color:var(--text2);padding:2px 0;display:flex;gap:6px}
+.risk-items li::before{content:'›';color:var(--text3)}
+
+/* SCENARIO */
+.scenario-controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.scenario-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:8px 16px;border-radius:4px;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.scenario-btn.active,.scenario-btn:hover{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
+
+/* IMPACT TABLE */
+.impact-table{width:100%;border-collapse:collapse;font-size:13px}
+.impact-table th{background:var(--bg3);color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.impact-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text)}
+.impact-table tr:hover td{background:rgba(255,255,255,.02)}
+.impact-table td.mono{font-family:'IBM Plex Mono',monospace}
+.up-text{color:var(--red)}
+.warn-text{color:var(--orange)}
+.amber-text{color:var(--amber)}
+.green-text{color:var(--green)}
+
+/* LOGISTICS */
+.timeline-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--border)}
+.timeline-dot{width:10px;height:10px;min-width:10px;border-radius:50%;margin-top:4px}
+.timeline-dot.critical{background:var(--red)}
+.timeline-dot.high{background:var(--orange)}
+.timeline-dot.moderate{background:var(--amber)}
+.timeline-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.timeline-body{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* PROGRESS BAR */
+.progress-wrap{margin:8px 0}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px}
+.progress-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .6s ease}
+
+/* DATA SOURCE */
+.data-sources{margin-top:24px;padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--text3)}
+.data-sources strong{color:var(--text2)}
+
+/* FOOTER */
+.footer{max-width:1280px;margin:32px auto 0;padding:0 24px 32px;border-top:1px solid var(--border);padding-top:16px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <span class="logo-text">HORMUZ CRISIS · PROCUREMENT INTELLIGENCE</span>
+    </div>
+    <div class="header-badges">
+      <span class="badge badge-red">LIVE CRISIS</span>
+      <span class="badge badge-amber">PROCUREMENT ALERT</span>
+    </div>
+    <div class="header-date">UPDATED: 23 MAR 2026</div>
+  </div>
+</div>
+
+<!-- CRISIS KPI BANNER -->
+<div class="crisis-banner">
+  <div class="crisis-banner-inner">
+    <div class="stat-pill">
+      <span class="stat-pill-label">Oil Disrupted</span>
+      <span class="stat-pill-value up">~20%</span>
+    </div>
+    <div class="divider-v"></div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Ships Stranded</span>
+      <span class="stat-pill-value up">150+</span>
+    </div>
+    <div class="divider-v"></div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Brent Peak</span>
+      <span class="stat-pill-value up">$126/bbl</span>
+    </div>
+    <div class="divider-v"></div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Tanker Traffic</span>
+      <span class="stat-pill-value up">↓ 70%</span>
+    </div>
+    <div class="divider-v"></div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Global GDP Impact</span>
+      <span class="stat-pill-value up">−2.9pp</span>
+    </div>
+    <div class="divider-v"></div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Closure Duration</span>
+      <span class="stat-pill-value warn">23 Days</span>
+    </div>
+    <div class="divider-v"></div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Reroute Add. Days</span>
+      <span class="stat-pill-value warn">+14–21d</span>
+    </div>
+    <div class="divider-v"></div>
+    <div class="stat-pill">
+      <span class="stat-pill-label">Crisis Start</span>
+      <span class="stat-pill-value" style="color:var(--text2);font-size:12px">28 Feb 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="showTab('price')">📈 Commodity Price Impact</button>
+    <button class="tab-btn" onclick="showTab('scenario')">🎯 Scenario Planner</button>
+    <button class="tab-btn" onclick="showTab('risk')">⚠️ Procurement Risk Matrix</button>
+    <button class="tab-btn" onclick="showTab('logistics')">🚢 Logistics & Lead Times</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- TAB 1: PRICE IMPACT -->
+  <div class="tab-panel active" id="tab-price">
+    <div class="section-title">Commodity price movement — Jan → Mar 2026 (source: Sunsirs China, LME)</div>
+    <p class="section-subtitle">Based on your uploaded price data. All values in USD-equivalent per tonne unless noted.</p>
+
+    <div class="grid-4" style="margin-bottom:24px">
+      <div class="card-sm">
+        <div class="card-title">Brent Crude Oil</div>
+        <div class="card-value up-text">+47.1%</div>
+        <div class="card-sub">Jan: ~$91.5 → Mar: ~$134.6 (indexed)</div>
+      </div>
+      <div class="card-sm">
+        <div class="card-title">Acrylic Acid</div>
+        <div class="card-value up-text">+85.1%</div>
+        <div class="card-sub">Largest spike in dataset</div>
+      </div>
+      <div class="card-sm">
+        <div class="card-title">Butadiene</div>
+        <div class="card-value up-text">+49.3%</div>
+        <div class="card-sub">Critical for synthetic rubber</div>
+      </div>
+      <div class="card-sm">
+        <div class="card-title">Benzene</div>
+        <div class="card-value up-text">+46.5%</div>
+        <div class="card-sub">Key petrochemical feedstock</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">Petrochemical & Energy — % Change Jan→Mar 2026</div>
+        <div class="chart-wrap" style="height:340px">
+          <canvas id="petroChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">Plastics, Polymers & Feedstocks — % Change Jan→Mar 2026</div>
+        <div class="chart-wrap" style="height:340px">
+          <canvas id="plasticsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">LME Metals — % Change Jan→Mar 2026</div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="metalsChart"></canvas>
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-top:8px">Note: Base metals showing relative stability vs petrochemicals — supply chains via different routes</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">Agricultural & Other Commodities — % Change Jan→Mar 2026</div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="agriChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- TAB 2: SCENARIO PLANNER -->
+  <div class="tab-panel" id="tab-scenario">
+    <div class="section-title">Dallas Fed Scenario Analysis — Strait of Hormuz Closure Duration</div>
+    <p class="section-subtitle">Source: Federal Reserve Bank of Dallas (March 20, 2026). Modelled impact on oil prices, global GDP & US economy.</p>
+
+    <div class="scenario-controls">
+      <button class="scenario-btn active" onclick="selectScenario(0,this)">Scenario 1: 1-Quarter Closure (Resolves Q3)</button>
+      <button class="scenario-btn" onclick="selectScenario(1,this)">Scenario 2: 2-Quarter Closure (Resolves Q4)</button>
+      <button class="scenario-btn" onclick="selectScenario(2,this)">Scenario 3: 3-Quarter Closure (Year-End)</button>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px" id="scenario-kpis">
+      <!-- Filled by JS -->
+    </div>
+
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">Oil Price Trajectory (WTI $/bbl) — 2026 by Quarter</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="oilScenarioChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">Global GDP Growth Impact — Annualized %, 2026</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="gdpChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title" style="margin-bottom:14px">Procurement Cost Impact by Scenario</div>
+      <table class="impact-table" style="width:100%">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Pre-Crisis Baseline</th>
+            <th>1Q Closure</th>
+            <th>2Q Closure</th>
+            <th>3Q Closure</th>
+            <th>Procurement Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Crude Oil</td>
+            <td class="mono">~$70/bbl</td>
+            <td class="mono amber-text">$97–110/bbl</td>
+            <td class="mono warn-text">$110–115/bbl</td>
+            <td class="mono up-text">$132+/bbl</td>
+            <td>Lock in forward contracts now</td>
+          </tr>
+          <tr>
+            <td>Ocean Freight (Asia–Europe)</td>
+            <td class="mono">Baseline</td>
+            <td class="mono amber-text">+15–20%</td>
+            <td class="mono warn-text">+25–40%</td>
+            <td class="mono up-text">+50%+</td>
+            <td>Book Cape route capacity early</td>
+          </tr>
+          <tr>
+            <td>Petrochemical Feedstocks</td>
+            <td class="mono">Baseline</td>
+            <td class="mono amber-text">+20–30%</td>
+            <td class="mono warn-text">+35–50%</td>
+            <td class="mono up-text">+60%+</td>
+            <td>Source US shale-based alternatives</td>
+          </tr>
+          <tr>
+            <td>Plastics & Polymers</td>
+            <td class="mono">Baseline</td>
+            <td class="mono amber-text">+15–25%</td>
+            <td class="mono warn-text">+25–35%</td>
+            <td class="mono up-text">+40%+</td>
+            <td>Safety stock, dual sourcing</td>
+          </tr>
+          <tr>
+            <td>Fertilizers (Urea)</td>
+            <td class="mono">$475/MT</td>
+            <td class="mono amber-text">$680/MT (+43%)</td>
+            <td class="mono warn-text">$800–900/MT</td>
+            <td class="mono up-text">$1,000+/MT</td>
+            <td>Impact: food inflation cascade</td>
+          </tr>
+          <tr>
+            <td>US Diesel</td>
+            <td class="mono">~$3.65/gal</td>
+            <td class="mono warn-text">~$5/gal (+37%)</td>
+            <td class="mono warn-text">$5.50–6/gal</td>
+            <td class="mono up-text">$6–7/gal</td>
+            <td>Fleet fuel hedge, reduce road miles</td>
+          </tr>
+          <tr>
+            <td>War-Risk Insurance</td>
+            <td class="mono">0.125%</td>
+            <td class="mono warn-text">0.2–0.4%</td>
+            <td class="mono up-text">0.5–1.0%</td>
+            <td class="mono up-text">1.0%+</td>
+            <td>Factor into landed cost models</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="data-sources">
+      <strong>Sources:</strong> Dallas Fed Economics (20 Mar 2026) — modelled 3 scenarios. Goldman Sachs: US inflation +0.8pp to 2.9%, GDP -0.3pp to 2.2%, recession probability 25%.
+      Oxford Economics: $140/bbl for 2 months → eurozone + UK + Japan contraction. Bloomberg (20 Mar 2026).
+    </div>
+  </div>
+
+  <!-- TAB 3: RISK MATRIX -->
+  <div class="tab-panel" id="tab-risk">
+    <div class="section-title">Procurement Category Risk Assessment — As of 23 Mar 2026</div>
+    <p class="section-subtitle">Risk level based on price volatility, supply chain exposure, and alternative sourcing availability.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px">
+      <div class="risk-card critical">
+        <div class="risk-header">
+          <span class="risk-name">Energy & Fuels</span>
+          <span class="risk-badge rb-critical">CRITICAL</span>
+        </div>
+        <div class="risk-impact up">Crude Oil +47% | Diesel +24%</div>
+        <ul class="risk-items">
+          <li>WTI surpassed $97/bbl; Brent peaked $126/bbl</li>
+          <li>US diesel near $5/gal (+37% in one month)</li>
+          <li>LPG up +28.1%, fuel oil +20.2%</li>
+          <li>Every industry's logistics cost affected</li>
+        </ul>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Exposure</span><span style="color:var(--red)">95%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:95%;background:var(--red)"></div></div>
+        </div>
+      </div>
+
+      <div class="risk-card critical">
+        <div class="risk-header">
+          <span class="risk-name">Petrochemical Feedstocks</span>
+          <span class="risk-badge rb-critical">CRITICAL</span>
+        </div>
+        <div class="risk-impact up">Benzene +46% | Butadiene +49%</div>
+        <ul class="risk-items">
+          <li>Acrylic acid surged +85.1% — highest in dataset</li>
+          <li>80% of Asia's naphtha from Middle East</li>
+          <li>Force majeure: PCS (SG), Chandra Asri (ID), Yeochun NCC (KR)</li>
+          <li>Styrene +37%, Benzene +46%, Acetone +37%</li>
+        </ul>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Exposure</span><span style="color:var(--red)">92%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:92%;background:var(--red)"></div></div>
+        </div>
+      </div>
+
+      <div class="risk-card critical">
+        <div class="risk-header">
+          <span class="risk-name">Shipping & Logistics</span>
+          <span class="risk-badge rb-critical">CRITICAL</span>
+        </div>
+        <div class="risk-impact up">+14–21 days | Cost +15–25%</div>
+        <ul class="risk-items">
+          <li>Maersk & Hapag-Lloyd suspended Mideast routes</li>
+          <li>Cape of Good Hope rerouting mandatory</li>
+          <li>Port congestion hits 2–5 weeks after reroute</li>
+          <li>War-risk insurance: 0.125% → 0.2–0.4%</li>
+        </ul>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Exposure</span><span style="color:var(--red)">90%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:90%;background:var(--red)"></div></div>
+        </div>
+      </div>
+
+      <div class="risk-card high">
+        <div class="risk-header">
+          <span class="risk-name">Plastics & Polymers</span>
+          <span class="risk-badge rb-high">HIGH</span>
+        </div>
+        <div class="risk-impact warn">PP +28% | HDPE +20% | PVC +19%</div>
+        <ul class="risk-items">
+          <li>84% of Middle East polyethylene relies on Hormuz</li>
+          <li>LDPE +18.6%, Polystyrene +28.5%, PET +29%</li>
+          <li>ABS (auto/electronics) up +33.7%</li>
+          <li>Packaging & consumer goods severely impacted</li>
+        </ul>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Exposure</span><span style="color:var(--orange)">78%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:78%;background:var(--orange)"></div></div>
+        </div>
+      </div>
+
+      <div class="risk-card high">
+        <div class="risk-header">
+          <span class="risk-name">Fertilizers & Agriculture</span>
+          <span class="risk-badge rb-high">HIGH</span>
+        </div>
+        <div class="risk-impact warn">Urea $475 → $680/MT (+43%)</div>
+        <ul class="risk-items">
+          <li>1/3 of global fertilizer trade transits Hormuz</li>
+          <li>Critical timing: US spring planting window</li>
+          <li>Food inflation cascade within 6–12 months</li>
+          <li>Ammonium sulphate +33.8%, sulphur +14%</li>
+        </ul>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Exposure</span><span style="color:var(--orange)">72%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:72%;background:var(--orange)"></div></div>
+        </div>
+      </div>
+
+      <div class="risk-card high">
+        <div class="risk-header">
+          <span class="risk-name">Synthetic Rubber & Elastomers</span>
+          <span class="risk-badge rb-high">HIGH</span>
+        </div>
+        <div class="risk-impact warn">BR Rubber +23.8% | Nitrile +15.5%</div>
+        <ul class="risk-items">
+          <li>Synthetic rubber is an oil derivative</li>
+          <li>Price shock ripples within weeks</li>
+          <li>SBR (Styrene Butadiene Rubber) +23.8%</li>
+          <li>Auto, industrial, aerospace sectors exposed</li>
+        </ul>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Exposure</span><span style="color:var(--orange)">68%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:68%;background:var(--orange)"></div></div>
+        </div>
+      </div>
+
+      <div class="risk-card moderate">
+        <div class="risk-header">
+          <span class="risk-name">Textiles & Fibres</span>
+          <span class="risk-badge rb-moderate">MODERATE</span>
+        </div>
+        <div class="risk-impact amber">Polyester (DTY) +25.6% | Nylon +33%</div>
+        <ul class="risk-items">
+          <li>Synthetic fabrics: Asian garment industry at risk</li>
+          <li>Nylon POY +28.5%, PA6 +32.8%</li>
+          <li>Spandex +6.4%, cotton +6.6% (moderate)</li>
+          <li>PTA (polyester precursor) up +20.9%</li>
+        </ul>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Exposure</span><span style="color:var(--amber)">55%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:55%;background:var(--amber)"></div></div>
+        </div>
+      </div>
+
+      <div class="risk-card moderate">
+        <div class="risk-header">
+          <span class="risk-name">Metals (Base & Precious)</span>
+          <span class="risk-badge rb-moderate">MODERATE</span>
+        </div>
+        <div class="risk-impact amber">Aluminium +4% | Copper −0.4%</div>
+        <ul class="risk-items">
+          <li>LME copper, nickel, zinc relatively stable</li>
+          <li>UAE aluminium exports at risk (Gulf-based)</li>
+          <li>Gold +7.1% (safe haven demand)</li>
+          <li>Energy-intensive smelting costs rising</li>
+        </ul>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Exposure</span><span style="color:var(--amber)">42%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:42%;background:var(--amber)"></div></div>
+        </div>
+      </div>
+
+      <div class="risk-card moderate">
+        <div class="risk-header">
+          <span class="risk-name">LNG & Natural Gas</span>
+          <span class="risk-badge rb-moderate">HIGH</span>
+        </div>
+        <div class="risk-impact warn">LNG +16.6% | Europe exposed 12–14%</div>
+        <ul class="risk-items">
+          <li>20% of global LNG supply through Hormuz</li>
+          <li>QatarEnergy force majeure declared</li>
+          <li>Europe: 12–14% of LNG supply disrupted</li>
+          <li>Pakistan & Bangladesh: 99%+ of LNG from Gulf</li>
+        </ul>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Exposure</span><span style="color:var(--orange)">65%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:65%;background:var(--orange)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">Procurement Action Priorities by Risk Level</div>
+      <table class="impact-table">
+        <thead><tr><th>Priority</th><th>Action</th><th>Timeline</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td><span class="risk-badge rb-critical">IMMEDIATE</span></td><td>Invoke force majeure clauses where applicable; notify suppliers</td><td class="mono">Now</td><td class="up-text">Supply continuity</td></tr>
+          <tr><td><span class="risk-badge rb-critical">IMMEDIATE</span></td><td>Build 30–60 day safety stock: plastics, petrochemical inputs</td><td class="mono">0–2 weeks</td><td class="up-text">Production protection</td></tr>
+          <tr><td><span class="risk-badge rb-high">HIGH</span></td><td>Lock in Cape of Good Hope shipping slots at current rates</td><td class="mono">1–2 weeks</td><td class="warn-text">Cost certainty</td></tr>
+          <tr><td><span class="risk-badge rb-high">HIGH</span></td><td>Identify US shale-based petrochemical alternative sources</td><td class="mono">2–3 weeks</td><td class="warn-text">Supply diversification</td></tr>
+          <tr><td><span class="risk-badge rb-high">HIGH</span></td><td>Re-model landed costs: include war-risk insurance surcharges</td><td class="mono">1 week</td><td class="amber-text">P&L accuracy</td></tr>
+          <tr><td><span class="risk-badge rb-moderate">MEDIUM</span></td><td>Qualify Tier-2/3 suppliers for critical polymer categories</td><td class="mono">3–6 weeks</td><td class="amber-text">Resilience</td></tr>
+          <tr><td><span class="risk-badge rb-moderate">MEDIUM</span></td><td>Hedge fuel exposure; evaluate fixed-rate logistics contracts</td><td class="mono">2–4 weeks</td><td class="amber-text">Budget protection</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 4: LOGISTICS -->
+  <div class="tab-panel" id="tab-logistics">
+    <div class="section-title">Logistics Impact — Supply Chain Lead Times & Freight Disruption</div>
+    <p class="section-subtitle">Sources: CNBC, FleetPoint, Carra Globe, Al Jazeera, Traffix (March 2026)</p>
+
+    <div class="grid-4" style="margin-bottom:24px">
+      <div class="card-sm">
+        <div class="card-title">Ocean Freight Cost Increase</div>
+        <div class="card-value warn-text">+15–25%</div>
+        <div class="card-sub">Via Cape of Good Hope rerouting</div>
+      </div>
+      <div class="card-sm">
+        <div class="card-title">Added Transit Days</div>
+        <div class="card-value warn-text">+14–21d</div>
+        <div class="card-sub">Compared to Hormuz-via-Suez route</div>
+      </div>
+      <div class="card-sm">
+        <div class="card-title">Port Congestion Timeline</div>
+        <div class="card-value amber-text">2–5 wks</div>
+        <div class="card-sub">After rerouted containers arrive</div>
+      </div>
+      <div class="card-sm">
+        <div class="card-title">Retail Delivery Delay</div>
+        <div class="card-value amber-text">1–10d</div>
+        <div class="card-sub">Last-mile compounding effect</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">Regional Exposure to Hormuz Closure</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="regionChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">Sector Lead Time Impact — Additional Days via Cape Route</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="leadTimeChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title" style="margin-bottom:14px">Supply Chain Disruption Timeline</div>
+      <div class="timeline-item">
+        <div class="timeline-dot critical"></div>
+        <div>
+          <div class="timeline-title">Day 0–3 (28 Feb – 2 Mar): Closure Effective</div>
+          <div class="timeline-body">IRGC confirms strait closure. Tanker traffic drops 70%. 150+ vessels anchor outside. War-risk insurance premiums spike from 0.125% to 0.2–0.4%. Maersk and Hapag-Lloyd suspend Mideast routes. IEA releases 400M barrels from reserves.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot critical"></div>
+        <div>
+          <div class="timeline-title">Day 4–10: Immediate Price Shock</div>
+          <div class="timeline-body">Brent crosses $100/bbl (8 Mar) for first time in 4 years. US diesel +37% in one month, approaches $5/gal. Petrochemical force majeure declarations begin: Chandra Asri (ID, Mar 3), Yeochun NCC (KR, Mar 4). Benzene, butadiene, naphtha prices surge.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot high"></div>
+        <div>
+          <div class="timeline-title">Day 11–21: Supply Chain Pressure Builds</div>
+          <div class="timeline-body">Initial ocean shock arrives. Rerouted containers cluster at Cape-adjacent ports. Drayage demand outpaces truck and chassis availability. Singapore PCS (Mar 11), Taiwan Petrochemical (Mar 10) declare force majeure. Japan begins releasing strategic petroleum reserves. Mitsubishi Chemical cuts ethylene output.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot high"></div>
+        <div>
+          <div class="timeline-title">Week 3–5 (NOW): Procurement Crisis Deepening</div>
+          <div class="timeline-body">Port congestion and terminal congestion rising. Empty container availability declining. Production cutbacks at Asian petrochemical plants. Urea prices hit $680/MT (+43%) — spring planting season at risk. Tech/auto sector procurement teams modelling 3 closure duration scenarios.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot moderate"></div>
+        <div>
+          <div class="timeline-title">Week 6–12: If No Resolution</div>
+          <div class="timeline-body">Full manufacturing adjustment required. Polymer and plastics buyers pivot to US shale-based alternatives. Automotive plant stoppages likely in Asia. Food inflation begins feeding through from fertilizer disruption. Recession risk elevated: 25% probability (Goldman Sachs). Oxford Economics warns of eurozone + Japan contraction if oil sustains $140/bbl for 2 months.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title" style="margin-bottom:14px">Trade Route Comparison: Hormuz vs. Cape of Good Hope</div>
+      <table class="impact-table">
+        <thead><tr><th>Route</th><th>Normal Transit (Asia–Europe)</th><th>Cost Premium</th><th>Risk Level</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Hormuz → Suez Canal</td><td class="mono">~18–22 days</td><td class="mono green-text">Baseline</td><td><span class="risk-badge rb-critical">BLOCKED</span></td><td class="up-text">IRGC-controlled; attacks on vessels</td></tr>
+          <tr><td>Cape of Good Hope</td><td class="mono">~32–40 days</td><td class="mono warn-text">+15–25%</td><td><span class="risk-badge rb-moderate">MODERATE</span></td><td class="amber-text">Current default route; congesting</td></tr>
+          <tr><td>Saudi East-West Pipeline</td><td class="mono">Bypass only</td><td class="mono amber-text">+$$ premium</td><td><span class="risk-badge rb-high">HIGH</span></td><td class="amber-text">1–1.5M bbl/day capacity only</td></tr>
+          <tr><td>Panama Canal</td><td class="mono">~25 days (Asia–US)</td><td class="mono amber-text">+10%</td><td><span class="risk-badge rb-moderate">MODERATE</span></td><td class="amber-text">Increased demand; not Hormuz bypass</td></tr>
+          <tr><td>Air Freight</td><td class="mono">2–5 days</td><td class="mono up-text">+800–1200%</td><td><span class="risk-badge rb-low">LOW RISK</span></td><td class="green-text">Emergency high-value goods only</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="data-sources">
+      <strong>Sources:</strong> CNBC (11 & 22 Mar 2026), FleetPoint (Mar 2026), Carra Globe Logistics Guide, Al Jazeera (3 Mar 2026), Wikipedia 2026 Strait of Hormuz Crisis, Traffix / Locus logistics experts.
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  <div>
+    <strong style="color:var(--text2)">Hormuz Procurement Intelligence Dashboard</strong> &nbsp;·&nbsp; 
+    Data: Sunsirs, LME, Dallas Fed, Bloomberg, CNBC, Al Jazeera, Wikipedia
+  </div>
+  <div>Built for LinkedIn Procurement Community · 23 March 2026</div>
+</div>
+
+<script>
+// Tab switching
+function showTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='logistics' && !window.logisticsChartsBuilt){buildLogisticsCharts();window.logisticsChartsBuilt=true;}
+  if(id==='scenario' && !window.scenarioBuilt){buildScenarioCharts();window.scenarioBuilt=true;}
+}
+
+// Shared colors
+const C={
+  red:'#d63030',orange:'#d96b1a',amber:'#b88a00',green:'#1a8f5a',
+  teal:'#1a8f96',blue:'#1a6bbf',grid:'rgba(0,0,0,0.07)',
+  text:'#4a4f6a'
+};
+
+const defaults={
+  color:C.text,
+  plugins:{legend:{display:false}},
+  scales:{
+    x:{grid:{color:C.grid},ticks:{color:C.text,font:{family:"'IBM Plex Mono',monospace",size:10}}},
+    y:{grid:{color:C.grid},ticks:{color:C.text,font:{family:"'IBM Plex Mono',monospace",size:10}}}
+  }
+};
+
+// ---- TAB 1: PRICE CHARTS ----
+// Petro
+new Chart(document.getElementById('petroChart'),{
+  type:'bar',
+  data:{
+    labels:['Acrylic Acid','Butadiene','Benzene','Brent Crude','WTI Crude','Acetone','Styrene','LPG','Gasoline','Diesel','Naphtha','LNG'],
+    datasets:[{
+      data:[85.1,49.3,46.5,47.1,46.6,37.3,37.1,28.1,22.8,24.4,14.2,16.6],
+      backgroundColor:ctx=>{
+        const v=ctx.parsed.y;
+        return v>50?C.red:v>35?C.orange:v>20?C.amber:C.teal;
+      },
+      borderRadius:3,borderSkipped:false
+    }]
+  },
+  options:{
+    ...defaults,
+    indexAxis:'y',
+    responsive:true,maintainAspectRatio:false,
+    plugins:{...defaults.plugins,tooltip:{callbacks:{label:v=>' +'+v.parsed.x.toFixed(1)+'%'}}},
+    scales:{
+      x:{...defaults.scales.x,ticks:{...defaults.scales.x.ticks,callback:v=>v+'%'}},
+      y:{...defaults.scales.y,ticks:{...defaults.scales.y.ticks,font:{size:10}}}
+    }
+  }
+});
+
+// Plastics
+new Chart(document.getElementById('plasticsChart'),{
+  type:'bar',
+  data:{
+    labels:['Epoxy Resin','ABS','Polycarbonate','PA6 (Nylon6)','Polystyrene','Polymerised MDI','PP','PET','HDPE','Ethylene Glycol','PVC','LDPE'],
+    datasets:[{
+      data:[32.6,33.7,19.7,32.8,28.5,16.9,28.1,29.1,20.3,19.1,19.1,18.6],
+      backgroundColor:ctx=>{
+        const v=ctx.parsed.y;
+        return v>35?C.red:v>25?C.orange:v>18?C.amber:C.blue;
+      },
+      borderRadius:3,borderSkipped:false
+    }]
+  },
+  options:{
+    ...defaults,
+    indexAxis:'y',
+    responsive:true,maintainAspectRatio:false,
+    plugins:{...defaults.plugins,tooltip:{callbacks:{label:v=>' +'+v.parsed.x.toFixed(1)+'%'}}},
+    scales:{
+      x:{...defaults.scales.x,ticks:{...defaults.scales.x.ticks,callback:v=>v+'%'}},
+      y:{...defaults.scales.y}
+    }
+  }
+});
+
+// Metals (LME)
+new Chart(document.getElementById('metalsChart'),{
+  type:'bar',
+  data:{
+    labels:['Gold','Tin','Copper','Zinc','Silver','Nickel','Palladium'],
+    datasets:[{
+      data:[7.1,0.0,-0.5,-1.0,-8.9,-3.0,-12.3],
+      backgroundColor:v=>v.parsed.y>=0?C.teal:C.red,
+      borderRadius:3,borderSkipped:false
+    }]
+  },
+  options:{
+    ...defaults,
+    responsive:true,maintainAspectRatio:false,
+    plugins:{...defaults.plugins,tooltip:{callbacks:{label:v=>v.parsed.y.toFixed(1)+'%'}}},
+    scales:{
+      x:{...defaults.scales.x},
+      y:{...defaults.scales.y,ticks:{...defaults.scales.y.ticks,callback:v=>v+'%'}}
+    }
+  }
+});
+
+// Agri
+new Chart(document.getElementById('agriChart'),{
+  type:'bar',
+  data:{
+    labels:['Yellow Phosphorus','Amm. Sulphate','Urea','Corn Starch','Soybean Meal','Rapeseed Meal','Cotton','Natural Rubber','Soybean','Corn'],
+    datasets:[{
+      data:[13.8,33.8,8.2,6.5,5.6,8.3,6.6,7.1,2.0,3.9],
+      backgroundColor:ctx=>{
+        const v=ctx.parsed.y;
+        return v>25?C.orange:v>10?C.amber:C.green;
+      },
+      borderRadius:3,borderSkipped:false
+    }]
+  },
+  options:{
+    ...defaults,
+    indexAxis:'y',
+    responsive:true,maintainAspectRatio:false,
+    plugins:{...defaults.plugins,tooltip:{callbacks:{label:v=>' +'+v.parsed.x.toFixed(1)+'%'}}},
+    scales:{
+      x:{...defaults.scales.x,ticks:{...defaults.scales.x.ticks,callback:v=>v+'%'}},
+      y:{...defaults.scales.y}
+    }
+  }
+});
+
+// ---- TAB 2: SCENARIOS ----
+const scenarios=[
+  {
+    label:'1-Quarter Closure (Q2 only)',
+    oilData:[70,103,68,65],
+    gdpData:[2.8,-2.9,4.4,3.2],
+    kpis:[
+      {label:'Q2 GDP Impact',value:'−2.9pp',color:C.red},
+      {label:'Q3 Recovery',value:'+2.2pp',color:C.green},
+      {label:'Oil Q3 Price',value:'$68/bbl',color:C.amber},
+      {label:'US Recession Risk',value:'25%',color:C.orange}
+    ]
+  },
+  {
+    label:'2-Quarter Closure (Q2–Q3)',
+    oilData:[70,103,115,76],
+    gdpData:[2.8,-2.9,-1.5,1.8],
+    kpis:[
+      {label:'Q2 GDP Impact',value:'−2.9pp',color:C.red},
+      {label:'Q3 Oil Price',value:'$115/bbl',color:C.red},
+      {label:'Q4 Recovery',value:'$76/bbl',color:C.amber},
+      {label:'US Recession Risk',value:'35%',color:C.orange}
+    ]
+  },
+  {
+    label:'3-Quarter Closure (Year-End)',
+    oilData:[70,103,115,132],
+    gdpData:[2.8,-2.9,-2.2,-1.8],
+    kpis:[
+      {label:'Year-End Oil Price',value:'$132/bbl',color:C.red},
+      {label:'Eurozone Status',value:'Contraction',color:C.red},
+      {label:'Japan Status',value:'Contraction',color:C.red},
+      {label:'US Recession Risk',value:'50%+',color:C.red}
+    ]
+  }
+];
+
+let oilChart,gdpChart,activeScenario=0;
+
+function buildScenarioCharts(){
+  oilChart=new Chart(document.getElementById('oilScenarioChart'),{
+    type:'line',
+    data:{
+      labels:['Q1 2026\n(Pre-Crisis)','Q2 2026\n(Current)','Q3 2026','Q4 2026'],
+      datasets:[
+        {label:'Scenario',data:scenarios[0].oilData,borderColor:C.amber,backgroundColor:'rgba(245,185,66,0.1)',borderWidth:2.5,pointBackgroundColor:C.amber,pointRadius:5,tension:.35,fill:true},
+        {label:'Pre-Crisis Baseline',data:[70,70,70,70],borderColor:C.grid,borderDash:[5,5],borderWidth:1,pointRadius:0,tension:0}
+      ]
+    },
+    options:{
+      ...defaults,
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>'$'+v.parsed.y+'/bbl'}}},
+      scales:{
+        x:{...defaults.scales.x},
+        y:{...defaults.scales.y,min:40,max:150,ticks:{...defaults.scales.y.ticks,callback:v=>'$'+v}}
+      }
+    }
+  });
+
+  gdpChart=new Chart(document.getElementById('gdpChart'),{
+    type:'bar',
+    data:{
+      labels:['Q1 2026','Q2 2026','Q3 2026','Q4 2026'],
+      datasets:[{
+        label:'GDP Growth %',
+        data:scenarios[0].gdpData,
+        backgroundColor:v=>v.parsed.y<0?C.red:C.green,
+        borderRadius:4,borderSkipped:false
+      }]
+    },
+    options:{
+      ...defaults,
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>v.parsed.y+'%'}}},
+      scales:{
+        x:{...defaults.scales.x},
+        y:{...defaults.scales.y,ticks:{...defaults.scales.y.ticks,callback:v=>v+'%'}}
+      }
+    }
+  });
+  updateScenarioKPIs(0);
+}
+
+function updateScenarioKPIs(idx){
+  const s=scenarios[idx];
+  const wrap=document.getElementById('scenario-kpis');
+  wrap.innerHTML=s.kpis.map(k=>`
+    <div class="card-sm">
+      <div class="card-title">${k.label}</div>
+      <div class="card-value" style="color:${k.color};font-size:22px">${k.value}</div>
+    </div>
+  `).join('');
+}
+
+function selectScenario(idx,btn){
+  activeScenario=idx;
+  document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(oilChart){
+    oilChart.data.datasets[0].data=scenarios[idx].oilData;
+    oilChart.data.datasets[0].borderColor=idx===2?C.red:idx===1?C.orange:C.amber;
+    oilChart.data.datasets[0].backgroundColor=idx===2?'rgba(255,76,76,0.1)':idx===1?'rgba(255,140,66,0.1)':'rgba(245,185,66,0.1)';
+    oilChart.data.datasets[0].pointBackgroundColor=idx===2?C.red:idx===1?C.orange:C.amber;
+    oilChart.update();
+    gdpChart.data.datasets[0].data=scenarios[idx].gdpData;
+    gdpChart.update();
+    updateScenarioKPIs(idx);
+  }
+}
+
+// ---- TAB 4: LOGISTICS CHARTS ----
+function buildLogisticsCharts(){
+  // Regional exposure
+  new Chart(document.getElementById('regionChart'),{
+    type:'bar',
+    data:{
+      labels:['Japan','S. Korea','China','India','Taiwan','Europe (LNG)','Pakistan','Bangladesh'],
+      datasets:[{
+        label:'Oil Import via Hormuz (%)',
+        data:[70,65,40,40,30,13,95,72],
+        backgroundColor:[C.red,C.red,C.orange,C.orange,C.amber,C.amber,'#ff2020','#ff2020'],
+        borderRadius:4,borderSkipped:false
+      }]
+    },
+    options:{
+      ...defaults,
+      indexAxis:'y',
+      responsive:true,maintainAspectRatio:false,
+      plugins:{...defaults.plugins,tooltip:{callbacks:{label:v=>v.parsed.x+'% of imports'}}},
+      scales:{
+        x:{...defaults.scales.x,min:0,max:100,ticks:{...defaults.scales.x.ticks,callback:v=>v+'%'}},
+        y:{...defaults.scales.y}
+      }
+    }
+  });
+
+  // Lead time
+  new Chart(document.getElementById('leadTimeChart'),{
+    type:'bar',
+    data:{
+      labels:['Electronics/IT','Auto Parts','Chemicals','Textiles','Food/Agri','Industrial Equip.','Consumer Goods'],
+      datasets:[
+        {label:'Normal Lead Time (days)',data:[22,25,18,20,14,28,16],backgroundColor:'rgba(44,181,192,0.4)',borderRadius:4,borderSkipped:false},
+        {label:'Cape Reroute Add. Days',data:[16,18,14,16,12,18,14],backgroundColor:C.orange,borderRadius:4,borderSkipped:false}
+      ]
+    },
+    options:{
+      ...defaults,
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,labels:{color:C.text,font:{size:11,family:"'IBM Plex Mono',monospace"},boxWidth:12,padding:16}}
+      },
+      scales:{
+        x:{...defaults.scales.x,stacked:true},
+        y:{...defaults.scales.y,stacked:true,ticks:{...defaults.scales.y.ticks,callback:v=>v+'d'}}
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
